@@ -39,6 +39,7 @@
   --gm-pane-muted: #8fa39c;
   --gm-pane-hover: rgba(230, 242, 238, 0.09);
   --gm-pane-focus: #ffffff;
+  --gm-tab-text: #c6d6d0; /* неактивные вкладки на тёмной полосе */
   /* акцент */
   --gm-accent-from: #2ee6a8;
   --gm-accent-to: #22d3ee;
@@ -53,6 +54,8 @@
   --gm-icon: #4a5652; /* иконки списка: ≥ 7:1 */
   /* состояния писем */
   --gm-unread: #0a7a5a;
+  --gm-unread-to: #0e7490; /* конец градиента непрочитанных: 5.4:1 на белом */
+  --gm-unread-gradient: linear-gradient(90deg, var(--gm-unread) 0, var(--gm-unread-to) 360px);
   --gm-fav-bg: #fff8e1;
   --gm-fav-bar: #f5b700;
   --gm-star: #f5b700;
@@ -103,30 +106,30 @@ button {
 #folderTree {
   background-color: var(--gm-pane-bg) !important;
   color: var(--gm-pane-text) !important;
-  scrollbar-color: var(--gm-pane-muted) var(--gm-pane-bg);
+  scrollbar-color: var(--gm-pane-muted) var(--gm-pane-bg) !important;
 }
 
 #folderTree li > .container {
-  position: relative;
-  min-height: 32px;
-  margin-inline: 8px;
-  border-radius: 8px;
-  color: var(--gm-pane-text);
+  position: relative !important;
+  min-height: 32px !important;
+  margin-inline: 8px !important;
+  border-radius: 8px !important;
+  color: var(--gm-pane-text) !important;
 }
 :root[uidensity="compact"] #folderTree li > .container {
-  min-height: 28px;
+  min-height: 28px !important;
 }
 :root[uidensity="touch"] #folderTree li > .container {
-  min-height: 40px;
+  min-height: 40px !important;
 }
 
 #folderTree .name {
-  color: inherit;
+  color: inherit !important;
 }
 #folderTree .total-count,
 #folderTree .folder-size {
   color: var(--gm-pane-muted) !important; /* 6.7:1 на #0F1A17, 12px+ */
-  font-size: 12px;
+  font-size: 12px !important;
 }
 
 /* наведение */
@@ -137,7 +140,7 @@ button {
 /* папка с непрочитанными */
 #folderTree li.unread > .container > .name,
 #folderTree li.new-messages > .container > .name {
-  font-weight: 700;
+  font-weight: 700 !important;
   color: var(--gm-pane-text) !important;
 }
 
@@ -150,19 +153,19 @@ button {
   background: var(--gm-accent) !important;
   border-color: transparent !important;
   color: var(--gm-accent-text) !important;
-  fill: var(--gm-accent-text);
-  font-weight: 700;
-  --indicator-background: var(--gm-accent-from);
-  --indicator-border: var(--gm-accent-from);
+  fill: var(--gm-accent-text) !important;
+  font-weight: 700 !important;
+  --indicator-background: var(--gm-accent-from) !important;
+  --indicator-border: var(--gm-accent-from) !important;
 }
 #folderTree li.selected > .container .name,
 #folderTree li.selected > .container .total-count,
 #folderTree li.selected > .container .folder-size {
   color: var(--gm-accent-text) !important;
-  font-weight: 700;
+  font-weight: 700 !important;
 }
 #folderTree li.selected > .container .icon {
-  color: var(--gm-accent-text);
+  color: var(--gm-accent-text) !important;
   --icon-color: var(--gm-accent-text) !important;
 }
 
@@ -173,8 +176,8 @@ button {
   outline-offset: 2px !important;
 }
 #folderTree li > .container:focus-visible {
-  outline: 2px solid var(--gm-pane-focus);
-  outline-offset: 1px;
+  outline: 2px solid var(--gm-pane-focus) !important;
+  outline-offset: 1px !important;
 }
 
 /* счётчик непрочитанных — яркий бейдж */
@@ -182,12 +185,12 @@ button {
   background: var(--gm-accent) !important;
   border-color: transparent !important; /* штатный «контурный» вариант у свёрнутых веток */
   color: var(--gm-accent-text) !important; /* 11:1 на акценте */
-  font-weight: 700;
-  font-size: 12px;
-  min-width: 20px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  text-align: center;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  min-width: 20px !important;
+  padding: 1px 7px !important;
+  border-radius: 999px !important;
+  text-align: center !important;
 }
 /* общее число писем — спокойный текст без плашки */
 #folderTree .total-count {
@@ -204,27 +207,28 @@ button {
       полоска берёт его из --icon-color иконки;
    2) иначе — цвет по типу папки. */
 #folderTree li:not([data-is-busy], [data-has-error]) > .container > .icon::before {
-  content: "";
-  position: absolute; /* относительно .icon (16×16, position: relative) */
-  inset-block: -4px;
-  inset-inline-start: -6px;
-  width: 3px;
-  border-radius: 2px;
-  background: var(--gm-folder-color, transparent);
+  content: "" !important;
+  position: absolute !important; /* относительно .icon (16×16, position: relative) */
+  inset-block: -4px !important;
+  inset-inline-start: -6px !important;
+  width: 3px !important;
+  border-radius: 2px !important;
+  background: var(--gm-folder-color, transparent) !important;
 }
 #folderTree li:not([data-is-busy], [data-has-error]) > .container > .icon[style*="--icon-color"]::before {
-  background: var(--icon-color);
+  background: var(--icon-color) !important;
 }
-#folderTree li[data-folder-type="inbox"] { --gm-folder-color: #2ee6a8; }
-#folderTree li[data-folder-type="drafts"] { --gm-folder-color: #ffc857; }
-#folderTree li[data-folder-type="sent"] { --gm-folder-color: #7aa2ff; }
-#folderTree li[data-folder-type="archive"] { --gm-folder-color: #b58cff; }
-#folderTree li[data-folder-type="templates"] { --gm-folder-color: #f28ce0; }
-#folderTree li[data-folder-type="outbox"] { --gm-folder-color: #ff9f5a; }
-#folderTree li[data-folder-type="junk"] { --gm-folder-color: #ff7a85; }
-#folderTree li[data-folder-type="trash"] { --gm-folder-color: #8fa39c; }
-/* пример для своей папки по имени:
-   #folderTree li[aria-label^="Работа"] { --gm-folder-color: #22d3ee; } */
+#folderTree li[data-folder-type="inbox"] > .container { --gm-folder-color: #2ee6a8; }
+#folderTree li[data-folder-type="drafts"] > .container { --gm-folder-color: #ffc857; }
+#folderTree li[data-folder-type="sent"] > .container { --gm-folder-color: #7aa2ff; }
+#folderTree li[data-folder-type="archive"] > .container { --gm-folder-color: #b58cff; }
+#folderTree li[data-folder-type="templates"] > .container { --gm-folder-color: #f28ce0; }
+#folderTree li[data-folder-type="outbox"] > .container { --gm-folder-color: #ff9f5a; }
+#folderTree li[data-folder-type="junk"] > .container { --gm-folder-color: #ff7a85; }
+#folderTree li[data-folder-type="trash"] > .container { --gm-folder-color: #8fa39c; }
+/* цвет задаётся на .container, а не на li — иначе его наследуют все подпапки.
+   пример для своей папки по имени:
+   #folderTree li[aria-label^="Работа"] > .container { --gm-folder-color: #22d3ee; } */
 
 /* на акцентной плашке полоска тёмная, чтобы не сливалась с градиентом */
 #folderTree li.selected:not([data-is-busy], [data-has-error]) > .container > .icon::before {
@@ -232,35 +236,48 @@ button {
 }
 
 /* заголовки аккаунтов */
-#folderTree li[data-server-type] > .container > .name {
-  font-weight: 600;
-  color: var(--gm-pane-muted);
-  text-transform: none;
+#folderTree li[data-server-type]:not(.selected) > .container > .name {
+  font-weight: 600 !important;
+  color: var(--gm-pane-muted) !important;
+  text-transform: none !important;
 }
 
 /* ==========================================================================
    4. ВКЛАДКИ
    ========================================================================== */
+/* Полоса вкладок всегда тёмная, как панель папок. Без этого при системном
+   заголовке окна (меню «Файл / Правка…» сверху) Thunderbird красит её цветом
+   панели инструментов — светло-серым, и светлый текст вкладок на ней пропадает. */
+#tabs-toolbar {
+  background: var(--gm-pane-bg) !important;
+  box-shadow: none !important;
+  color: var(--gm-tab-text) !important;
+}
+#tabs-toolbar toolbarbutton {
+  color: var(--gm-tab-text) !important;
+  fill: currentColor !important;
+}
 #tabmail-tabs .tabmail-tab {
-  color: #a9bdb6 !important; /* 9.0:1 на #0F1A17 */
-  font-weight: 500;
-  font-size: 14px;
+  color: var(--gm-tab-text) !important; /* 12:1 на #0F1A17 */
+  font-weight: 500 !important;
+  font-size: 14px !important;
 }
 #tabmail-tabs .tabmail-tab .tab-background {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0 !important;
 }
+/* наведение: текст белый, под вкладкой лёгкая подложка — ярче, а не бледнее */
 #tabmail-tabs .tabmail-tab:not([selected]):hover {
-  color: #e6f2ee !important;
+  color: #ffffff !important;
 }
 #tabmail-tabs .tabmail-tab:not([selected]):hover .tab-background {
-  background: rgba(230, 242, 238, 0.08) !important;
+  background: rgba(230, 242, 238, 0.14) !important;
 }
 #tabmail-tabs .tabmail-tab[selected] {
   color: var(--gm-accent-text) !important;
-  font-weight: 700;
+  font-weight: 700 !important;
 }
 #tabmail-tabs .tabmail-tab[selected] .tab-background {
   background: var(--gm-accent) !important;
@@ -270,8 +287,8 @@ button {
   color: var(--gm-accent-text) !important;
 }
 #tabmail-tabs .tabmail-tab:focus-visible {
-  outline: 2px solid #ffffff;
-  outline-offset: -2px;
+  outline: 2px solid #ffffff !important;
+  outline-offset: -2px !important;
 }
 
 /* ==========================================================================
@@ -280,37 +297,37 @@ button {
    Табличный вид (table-layout) поддержан теми же правилами.
    ========================================================================== */
 #threadTree {
-  --tree-pane-background: var(--gm-bg);
-  --tree-card-background: transparent;
-  --unread-color: var(--gm-unread);
+  --tree-pane-background: var(--gm-bg) !important;
+  --tree-card-background: transparent !important;
+  --unread-color: var(--gm-unread) !important;
 }
 #threadTree,
 #threadTree [is="tree-view-table-body"] {
   background-color: var(--gm-bg) !important;
   color: var(--gm-text) !important;
-  scrollbar-color: var(--gm-border) var(--gm-bg);
+  scrollbar-color: var(--gm-border) var(--gm-bg) !important;
 }
 
 #threadTree tr:is(.table-layout, .card-layout) {
-  background-color: var(--gm-bg);
-  color: var(--gm-text);
-  border-bottom: 1px solid var(--gm-divider);
-  box-shadow: none;
+  background-color: var(--gm-bg) !important;
+  color: var(--gm-text) !important;
+  border-bottom: 1px solid var(--gm-divider) !important;
+  box-shadow: none !important;
   /* полоска слева и контур выделения рисуются на ячейках (см. ниже) */
   --gm-strip: 0 0 transparent;
   --gm-edge: 0 0 transparent;
 }
 #threadTree tr:is(.table-layout, .card-layout) > td {
-  box-shadow: var(--gm-edge);
+  box-shadow: var(--gm-edge) !important;
 }
 #threadTree tr:is(.table-layout, .card-layout) > td:first-child {
-  box-shadow: var(--gm-strip), var(--gm-edge);
+  box-shadow: var(--gm-strip), var(--gm-edge) !important;
 }
 
 /* --- Карточки: плоские строки во всю ширину вместо «коробочек» с рамкой.
    Цвет состояния красит всю строку (tr), сама карточка прозрачная. --- */
 #threadTree .card-layout > td {
-  border-bottom: 1px solid var(--gm-divider);
+  border-bottom: 1px solid var(--gm-divider) !important;
 }
 #threadTree .card-layout > td > .card-container {
   background-color: transparent !important;
@@ -319,54 +336,76 @@ button {
   box-shadow: none !important;
 }
 #threadTree .card-layout > td > .card-container::before {
-  display: none; /* штатный индикатор выделения: его заменяют полоски и контур */
+  display: none !important; /* штатный индикатор выделения: его заменяют полоски и контур */
 }
 #threadTree tr:is(.table-layout, .card-layout) :is(.sender, .date, .correspondent, .datecol-column, .sizecol-column) {
-  color: var(--gm-muted);
-  font-size: 13px;
+  color: var(--gm-muted) !important;
+  font-size: 13px !important;
 }
 /* в карточке отправитель — первая строка, основной цвет текста */
 #threadTree tr.card-layout .card-container .sender {
-  color: var(--gm-text);
-  font-size: 14px;
+  color: var(--gm-text) !important;
+  font-size: 14px !important;
 }
-#threadTree tr:is(.table-layout, .card-layout):hover:not(.selected) {
-  background-color: #f2f5f4;
+#threadTree tr:is(.table-layout, .card-layout):hover:not(.selected, [data-properties~="flagged"], [data-properties~="tagged"]) {
+  background-color: #f2f5f4 !important;
 }
 
 /* --- Непрочитанные: жирные, #0A7A5A, точка слева --- */
 #threadTree tr[data-properties~="unread"] {
-  font-weight: 700;
-  color: var(--gm-unread);
+  font-weight: 700 !important;
+  color: var(--gm-unread) !important;
 }
 #threadTree tr[data-properties~="unread"] .subject-line,
 #threadTree tr[data-properties~="unread"] .subject,
 #threadTree tr[data-properties~="unread"] .sender {
-  font-weight: 700;
-  color: var(--gm-unread);
+  font-weight: 700 !important;
+  color: var(--gm-unread) !important;
 }
 #threadTree .card-layout[data-properties~="unread"] {
-  --read-status-fill: var(--gm-unread);
-  --read-status-stroke: var(--gm-unread);
+  --read-status-fill: var(--gm-unread) !important;
+  --read-status-stroke: var(--gm-unread) !important;
 }
 /* в т.ч. для «новых», штатно синих; у писем с меткой тема остаётся в цвете метки */
 #threadTree tr.card-layout[data-properties~="unread"] .card-container .sender,
 #threadTree tr.card-layout[data-properties~="unread"]:not([data-properties~="tagged"]) .card-container .subject {
   color: var(--gm-unread) !important;
 }
+/* непрочитанные чуть крупнее (15px при базовых 14px) */
+#threadTree tr.card-layout[data-properties~="unread"] .card-container :is(.sender, .subject) {
+  font-size: 15px !important;
+}
+#threadTree .table-layout[data-properties~="unread"] .subject-line > span {
+  font-size: 15px !important;
+}
+/* лёгкий градиент текста: зелёный → тёмная бирюза на первых 360px строки.
+   Оба края ≥ 4.5:1 на белом и на выделении; color остаётся запасным цветом. */
+#threadTree tr.card-layout[data-properties~="unread"] .card-container .sender,
+#threadTree tr.card-layout[data-properties~="unread"]:not([data-properties~="tagged"]) .card-container .subject,
+#threadTree .table-layout[data-properties~="unread"]:not([data-properties~="tagged"], .selected) .subject-line > span {
+  background-image: var(--gm-unread-gradient) !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+@media (forced-colors) {
+  #threadTree tr[data-properties~="unread"] :is(.sender, .subject, .subject-line > span) {
+    background-image: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+}
 #threadTree .table-layout[data-properties~="unread"] .subject-line::before {
-  content: "";
-  flex: none;
-  inline-size: 8px;
-  block-size: 8px;
-  margin-inline-end: 6px;
-  border-radius: 50%;
-  background: var(--gm-unread);
+  content: "" !important;
+  flex: none !important;
+  inline-size: 8px !important;
+  block-size: 8px !important;
+  margin-inline-end: 6px !important;
+  border-radius: 50% !important;
+  background: var(--gm-unread) !important;
 }
 
 /* --- Избранное: жёлтая полоска 4px, фон #FFF8E1 --- */
 #threadTree tr[data-properties~="flagged"]:not(.selected) {
-  background-color: var(--gm-fav-bg);
+  background-color: var(--gm-fav-bg) !important;
 }
 #threadTree tr[data-properties~="flagged"] {
   --gm-strip: inset 4px 0 0 var(--gm-fav-bar);
@@ -381,7 +420,7 @@ button {
   --gm-strip: inset 4px 0 0 var(--tag-color, transparent);
 }
 #threadTree tr[data-properties~="tagged"]:not(.selected) {
-  background-color: color-mix(in srgb, var(--tag-color, transparent) 14%, var(--gm-bg));
+  background-color: color-mix(in srgb, var(--tag-color, transparent) 14%, var(--gm-bg)) !important;
 }
 #threadTree tr[data-properties~="tagged"] :is(.subject-line, .subject) {
   color: color-mix(in srgb, var(--tag-color, var(--gm-text)) 40%, var(--gm-text)) !important;
@@ -398,7 +437,7 @@ button {
 
 /* --- Важно (тег $label1 → класс T_24label1): красная полоска, фон #FFEDEE --- */
 #threadTree tr[data-properties~="T_24label1"]:not(.selected) {
-  background-color: var(--gm-imp-bg);
+  background-color: var(--gm-imp-bg) !important;
 }
 #threadTree tr[data-properties~="T_24label1"] {
   --gm-strip: inset 4px 0 0 var(--gm-imp-bar);
@@ -415,19 +454,19 @@ button {
 /* --- Звезда: жёлтая заливка + тёмный контур (иначе 1.7:1) --- */
 #threadTree .button-star,
 #threadTree .tree-view-row-flag img {
-  -moz-context-properties: fill, stroke;
+  -moz-context-properties: fill, stroke !important;
 }
 #threadTree tr[data-properties~="flagged"] .button-star,
 #threadTree tr[data-properties~="flagged"] .tree-view-row-flag img {
   fill: var(--gm-star) !important;
   stroke: var(--gm-star-outline) !important;
-  stroke-width: 1.2px;
+  stroke-width: 1.2px !important;
 }
 /* не отмеченная звезда — различимый контур ≥ 3:1 */
 #threadTree tr:not([data-properties~="flagged"]) .button-star {
-  fill: transparent;
-  stroke: var(--gm-icon);
-  opacity: 0.65;
+  fill: transparent !important;
+  stroke: var(--gm-icon) !important;
+  opacity: 0.65 !important;
 }
 
 /* --- Выделенное письмо (панель в фокусе) --- */
@@ -456,49 +495,49 @@ button {
 /* --- Свёрнутая ветка с непрочитанными внутри --- */
 #threadTree tr.children.collapsed[data-properties~="hasUnread"],
 #threadTree tr.children.collapsed.hasUnread {
-  font-weight: 700;
+  font-weight: 700 !important;
 }
 #threadTree tr.children.collapsed:is([data-properties~="hasUnread"], .hasUnread) .twisty::after {
-  content: "";
-  display: inline-block;
-  inline-size: 10px;
-  block-size: 10px;
-  margin-inline-start: 3px;
-  border-radius: 50%;
-  background: var(--gm-accent);
-  box-shadow: 0 0 0 2px var(--gm-bg), 0 0 0 3.5px var(--gm-unread);
+  content: "" !important;
+  display: inline-block !important;
+  inline-size: 10px !important;
+  block-size: 10px !important;
+  margin-inline-start: 3px !important;
+  border-radius: 50% !important;
+  background: var(--gm-accent) !important;
+  box-shadow: 0 0 0 2px var(--gm-bg), 0 0 0 3.5px var(--gm-unread) !important;
 }
 
 /* --- Иконки: вложение, ответ, пересылка, спам — читаемые (≥ 3:1) --- */
 #threadTree :is(.state, .attachment-icon, .button-spam img, .tree-view-row-attach img) {
   opacity: 1 !important;
-  color: var(--gm-icon);
-  inline-size: 16px;
-  block-size: 16px;
+  color: var(--gm-icon) !important;
+  inline-size: 16px !important;
+  block-size: 16px !important;
 }
 #threadTree tr[data-properties~="replied"] .state,
 #threadTree tr[data-properties~="forwarded"] .state {
-  color: var(--gm-unread);
+  color: var(--gm-unread) !important;
 }
 #threadTree tr:not([data-properties~="attach"]) .attachment-icon {
   opacity: 0 !important;
 }
 #threadTree tr[data-properties~="junk"] {
-  color: var(--gm-muted);
-  background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px);
+  color: var(--gm-muted) !important;
+  background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px) !important;
 }
 #threadTree tr[data-properties~="junk"] .button-spam img {
-  color: var(--gm-imp-text);
+  color: var(--gm-imp-text) !important;
 }
 
 /* Теги в списке и в письме — цветные чипсы */
 #messageHeader .tag,
 #messageHeader .message-header-tag,
 .tag-list .tag {
-  border-radius: 999px;
-  padding: 1px 8px;
-  font-size: 12px;
-  font-weight: 600;
+  border-radius: 999px !important;
+  padding: 1px 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
 }
 
 /* Заголовок списка, сортировка */
@@ -507,15 +546,15 @@ button {
   background: #f7faf9 !important;
   color: var(--gm-muted) !important;
   border-bottom: 1px solid var(--gm-divider) !important;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 12px !important;
+  font-weight: 600 !important;
 }
 
 /* Видимая обводка фокуса в списке — тёмная, на белом ≥ 3:1 */
 #threadTree tr:focus-visible,
 #threadTree [is="tree-view-table-body"]:focus-visible {
-  outline: 2px solid var(--gm-text);
-  outline-offset: -2px;
+  outline: 2px solid var(--gm-text) !important;
+  outline-offset: -2px !important;
 }
 
 /* ==========================================================================
@@ -530,18 +569,18 @@ button {
 #messageHeader .message-header-container {
   background-color: var(--gm-bg) !important;
   color: var(--gm-text) !important;
-  border-bottom: 2px solid var(--gm-divider);
-  box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35);
+  border-bottom: 2px solid var(--gm-divider) !important;
+  box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35) !important;
 }
 #messageHeader #expandedsubjectBox,
 #messageHeader .message-header-subject,
 #messageHeader .header-subject {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 18px !important;
+  font-weight: 700 !important;
 }
 #messageHeader :is(.header-label, .message-header-label, .date) {
-  color: var(--gm-muted);
-  font-size: 13px;
+  color: var(--gm-muted) !important;
+  font-size: 13px !important;
 }
 
 /* ==========================================================================
@@ -553,25 +592,25 @@ button {
 #unifiedToolbarContent [item-id="write-message"] {
   background: var(--gm-accent) !important;
   color: var(--gm-accent-text) !important;
-  font-weight: 700;
-  border-radius: 8px;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
   border: 0 !important;
 }
 #button-newmsg:hover,
 #unifiedToolbarContent [data-item-id="write-message"]:hover,
 #unifiedToolbarContent [item-id="write-message"]:hover {
-  filter: brightness(1.06) saturate(1.05);
+  filter: brightness(1.06) saturate(1.05) !important;
 }
 #button-newmsg:focus-visible,
 #unifiedToolbarContent [data-item-id="write-message"]:focus-visible,
 #unifiedToolbarContent [item-id="write-message"]:focus-visible {
-  outline: 2px solid var(--gm-text);
-  outline-offset: 2px;
+  outline: 2px solid var(--gm-text) !important;
+  outline-offset: 2px !important;
 }
 #button-newmsg :is(.toolbarbutton-icon, .toolbarbutton-text, label),
 #unifiedToolbarContent [data-item-id="write-message"] :is(img, span, label) {
   color: var(--gm-accent-text) !important;
-  fill: currentColor;
+  fill: currentColor !important;
 }
 
 /* Поиск и поля ввода: рамка 3:1, фокус — зелёная + кольцо */
@@ -580,35 +619,38 @@ textarea,
 search-bar input,
 #qfb-qs-textbox {
   border: 1px solid var(--gm-border) !important;
-  border-radius: 8px;
-  background: #ffffff;
-  color: var(--gm-text);
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: var(--gm-text) !important;
 }
 input:focus-visible,
 textarea:focus-visible,
 search-bar input:focus-visible {
   border-color: var(--gm-unread) !important;
-  outline: 2px solid var(--gm-unread);
-  outline-offset: 1px;
+  outline: 2px solid var(--gm-unread) !important;
+  outline-offset: 1px !important;
 }
 ::placeholder {
-  color: var(--gm-muted);
-  opacity: 1;
+  color: var(--gm-muted) !important;
+  opacity: 1 !important;
 }
 
 /* Панель быстрых фильтров */
 #quickFilterBarContainer,
 #quick-filter-bar {
-  background: #f7faf9 !important;
+  background-color: #f7faf9 !important;
+  color: var(--gm-text) !important; /* штатно — цвет текста вкладок */
   border-bottom: 1px solid var(--gm-divider) !important;
 }
-#quickFilterBarContainer toolbarbutton[checked="true"],
-#quickFilterBarContainer button[aria-pressed="true"],
+/* Включённый фильтр. Только background-color: значки кнопок — это
+   background-image, сокращённое `background` их стирает. */
+#quick-filter-bar .check-button[aria-pressed="true"],
 #quick-filter-bar toolbarbutton[checked="true"] {
-  background: var(--gm-sel-bg) !important;
+  background-color: var(--gm-sel-bg) !important;
+  border-color: var(--gm-unread) !important;
   color: var(--gm-accent-text) !important;
-  font-weight: 700;
-  box-shadow: inset 0 -3px 0 var(--gm-unread);
+  font-weight: 700 !important;
+  box-shadow: inset 0 -3px 0 var(--gm-unread) !important;
 }
 
 /* ==========================================================================
@@ -657,6 +699,69 @@ search-bar input:focus-visible {
 #cardsPane .selected {
   background: var(--gm-sel-bg) !important;
   box-shadow: inset 4px 0 0 var(--gm-unread);
+}
+
+/* ==========================================================================
+   КАЛЕНДАРЬ: боковая панель
+   Мини-календарь штатно берёт цвет текста тёмной боковой панели, а фон — светлый,
+   поэтому месяц, год и дни недели пропадали. Здесь он целиком белый с тёмным
+   текстом; все пары ≥ 4.5:1.
+   ========================================================================== */
+calendar-minimonth {
+  --mmMainColor: var(--gm-text) !important;
+  --mmMainBackground: #ffffff !important;
+  --mmMainBorderColor: #c9d3cf !important;
+  --mmMainBorderRadius: 10px !important;
+  --mmBoxBackground: #eef2f0 !important; /* плашки «месяц» и «год» */
+  --mmBoxBorderColor: #c9d3cf !important;
+  --mmBoxItemColor: #c9d3cf !important;
+  --mmDayColor: var(--gm-text) !important;
+  --mmDayOtherColor: var(--gm-muted) !important; /* дни соседних месяцев: 5.6:1 */
+  --mmDayWeekColor: var(--gm-unread) !important; /* номера недель */
+  --mmDayTodayColor: var(--gm-accent-text) !important;
+  --mmDayTodayBackground: var(--gm-accent-from) !important; /* сегодня: 11:1 */
+  --mmDayTodayBorderColor: var(--gm-unread) !important;
+  --mmDaySelectedColor: var(--gm-accent-text) !important;
+  --mmDaySelectedBackground: var(--gm-sel-bg) !important;
+  --mmDaySelectedBorderColor: var(--gm-unread) !important;
+  --mmDaySelectedTodayBackground: var(--gm-accent-from) !important;
+  --mmDaySelectedTodayBorderColor: var(--gm-accent-text) !important;
+  --mmDayBusyColor: var(--gm-unread) !important;
+  color: var(--gm-text) !important;
+}
+calendar-minimonth :is(.minimonth-row-header, .minimonth-row-header-week) {
+  color: var(--gm-muted) !important;
+  font-weight: 600 !important;
+}
+calendar-minimonth .minimonth-nav-item input {
+  color: var(--gm-text) !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  outline-offset: -2px;
+}
+calendar-minimonth .minimonth-nav-btn {
+  color: var(--gm-text) !important;
+  stroke: var(--gm-text) !important;
+  fill: var(--gm-text) !important;
+}
+
+/* «Новое событие / задача», когда создавать некуда (календарь выключен) */
+:is(#sidePanelNewEvent, #sidePanelNewTask):disabled {
+  opacity: 1 !important;
+  background-color: #1f2f2a !important;
+  border-color: #3a4d46 !important;
+  color: var(--gm-pane-muted) !important; /* 5.6:1 */
+}
+
+/* список календарей: кнопка «Включить» читается и на акцентной, и на тёмной строке */
+#calendar-list > li > button.calendar-enable-button {
+  background-color: var(--gm-accent-text) !important;
+  color: var(--gm-accent-from) !important; /* 11:1 */
+  border: 1px solid var(--gm-accent-from) !important;
+}
+#calendar-list > li > button.calendar-enable-button:is(:hover, :focus-visible, :active) {
+  background-color: #0d3a2c !important;
+  color: #ffffff !important;
 }
 
 /* ==========================================================================
