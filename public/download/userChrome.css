@@ -1,0 +1,648 @@
+/* ==========================================================================
+   GlowMail 1.0 — userChrome.css для Thunderbird 128+ / Betterbird
+   Вид «3 панели»: папки · список · письмо.
+   Работает вместе с WebExtension-темой glowmail-theme.xpi (рамка, вкладки, меню).
+
+   Установка: положить в  <профиль>/chrome/userChrome.css  рядом с папкой fonts/
+   и включить  toolkit.legacyUserProfileCustomizations.stylesheets = true
+   (см. INSTALL.md).
+
+   Контраст (WCAG 2.2 AA): текст ≥ 4.5:1, иконки/рамки ≥ 3:1.
+   Селекторы проверены по исходникам Thunderbird 128 (about3Pane, thread-row,
+   folder-tree-row, threadPane.css). Если что-то не подхватилось после обновления —
+   откройте Browser Toolbox (Ctrl+Shift+Alt+I) и сверьте классы.
+   ========================================================================== */
+
+/* ---------- Шрифт: Inter (в комплекте), запасной system-ui ---------- */
+@font-face {
+  font-family: "GlowMail Inter";
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/Inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "GlowMail Inter";
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/Inter-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+/* ---------- Токены ---------- */
+:root {
+  /* панель папок */
+  --gm-pane-bg: #0f1a17;
+  --gm-pane-text: #e6f2ee;
+  --gm-pane-muted: #8fa39c;
+  --gm-pane-hover: rgba(230, 242, 238, 0.09);
+  --gm-pane-focus: #ffffff;
+  /* акцент */
+  --gm-accent-from: #2ee6a8;
+  --gm-accent-to: #22d3ee;
+  --gm-accent-text: #062018;
+  --gm-accent: linear-gradient(90deg, #2ee6a8 0%, #22d3ee 100%);
+  /* список и письмо */
+  --gm-bg: #ffffff;
+  --gm-text: #1a1f1d;
+  --gm-muted: #5f6b67;
+  --gm-divider: #e6ebe9;
+  --gm-border: #8a9893; /* рамки полей: 3.0:1 на белом */
+  --gm-icon: #4a5652; /* иконки списка: ≥ 7:1 */
+  /* состояния писем */
+  --gm-unread: #0a7a5a;
+  --gm-fav-bg: #fff8e1;
+  --gm-fav-bar: #f5b700;
+  --gm-star: #f5b700;
+  --gm-star-outline: #7a5600; /* контур звезды: 6.3:1 на #FFF8E1 */
+  --gm-imp-bg: #ffedee;
+  --gm-imp-bar: #d92d3a;
+  --gm-imp-text: #b4232a;
+  --gm-sel-bg: #d6f5ea;
+  --gm-sel-bg-inactive: #e2f3eb;
+  --gm-sel-edge-inactive: #3e9a7b;
+  --gm-font: "GlowMail Inter", Inter, Manrope, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+
+  /* штатные переменные Thunderbird */
+  --thread-pane-unread-color: var(--gm-unread) !important;
+  --thread-pane-flag-fill: var(--gm-star) !important;
+  --thread-pane-flag-stroke: var(--gm-star-outline) !important;
+  --folderpane-unread-count-background: var(--gm-accent-from) !important;
+  --folderpane-unread-new-count-background: var(--gm-accent-from) !important;
+  --folderpane-unread-count-color: var(--gm-accent-text) !important;
+
+  font-family: var(--gm-font) !important;
+  font-size: 14px;
+}
+
+/* Только sans-serif и базовые 14px в рабочих областях */
+#folderTree,
+#threadTree,
+#messageHeader,
+#quickFilterBarContainer,
+menupopup,
+panel,
+dialog,
+input,
+button {
+  font-family: var(--gm-font) !important;
+}
+#folderTree,
+#threadTree {
+  font-size: 14px !important;
+}
+
+/* ==========================================================================
+   3. ПАНЕЛЬ ПАПОК
+   ========================================================================== */
+#folderPane,
+#folderPane > *,
+#folderTree {
+  background-color: var(--gm-pane-bg) !important;
+  color: var(--gm-pane-text) !important;
+  scrollbar-color: var(--gm-pane-muted) var(--gm-pane-bg);
+}
+
+#folderTree li > .container {
+  position: relative;
+  min-height: 32px;
+  margin-inline: 8px;
+  border-radius: 8px;
+  color: var(--gm-pane-text);
+}
+:root[uidensity="compact"] #folderTree li > .container {
+  min-height: 28px;
+}
+:root[uidensity="touch"] #folderTree li > .container {
+  min-height: 40px;
+}
+
+#folderTree .name {
+  color: inherit;
+}
+#folderTree .total-count,
+#folderTree .folder-size {
+  color: var(--gm-pane-muted) !important; /* 6.7:1 на #0F1A17, 12px+ */
+  font-size: 12px;
+}
+
+/* наведение */
+#folderTree li:not(.selected) > .container:hover {
+  background-color: var(--gm-pane-hover) !important;
+}
+
+/* папка с непрочитанными */
+#folderTree li.unread > .container > .name,
+#folderTree li.new-messages > .container > .name {
+  font-weight: 700;
+  color: var(--gm-pane-text) !important;
+}
+
+/* активная папка: акцентная плашка + жирный текст */
+#folderTree li.selected > .container {
+  background: var(--gm-accent) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+}
+#folderTree li.selected > .container .name,
+#folderTree li.selected > .container .total-count,
+#folderTree li.selected > .container .folder-size {
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+}
+#folderTree li.selected > .container .icon {
+  color: var(--gm-accent-text);
+  --icon-color: var(--gm-accent-text) !important;
+}
+
+/* клавиатурный фокус: белая обводка, видна и на плашке, и на тёмном */
+#folderTree:focus-visible li.selected > .container,
+#folderTree:focus-within li.selected > .container:focus-visible {
+  outline: 2px solid var(--gm-pane-focus) !important;
+  outline-offset: 2px !important;
+}
+#folderTree li > .container:focus-visible {
+  outline: 2px solid var(--gm-pane-focus);
+  outline-offset: 1px;
+}
+
+/* счётчик непрочитанных — яркий бейдж */
+#folderTree .unread-count {
+  background: var(--gm-accent) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  font-size: 12px;
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  text-align: center;
+}
+/* на акцентной плашке бейдж инвертируется */
+#folderTree li.selected > .container > .unread-count {
+  background: var(--gm-accent-text) !important;
+  color: var(--gm-accent-from) !important; /* 11:1 */
+}
+
+/* цвета папок: полоска слева.
+   1) если пользователь задал цвет папки штатно (Folder → Properties → Color),
+      полоска берёт его из --icon-color иконки;
+   2) иначе — цвет по типу папки. */
+#folderTree li > .container > .icon::before {
+  content: "";
+  position: absolute;
+  inset-block: 7px;
+  inset-inline-start: -8px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--gm-folder-color, transparent);
+}
+#folderTree li > .container > .icon[style*="--icon-color: #"]::before,
+#folderTree li > .container > .icon[style*="--icon-color: rgb"]::before {
+  background: var(--icon-color);
+}
+#folderTree li[data-folder-type="inbox"] { --gm-folder-color: #2ee6a8; }
+#folderTree li[data-folder-type="drafts"] { --gm-folder-color: #ffc857; }
+#folderTree li[data-folder-type="sent"] { --gm-folder-color: #7aa2ff; }
+#folderTree li[data-folder-type="archive"] { --gm-folder-color: #b58cff; }
+#folderTree li[data-folder-type="templates"] { --gm-folder-color: #f28ce0; }
+#folderTree li[data-folder-type="outbox"] { --gm-folder-color: #ff9f5a; }
+#folderTree li[data-folder-type="junk"] { --gm-folder-color: #ff7a85; }
+#folderTree li[data-folder-type="trash"] { --gm-folder-color: #8fa39c; }
+/* пример для своей папки по имени:
+   #folderTree li[aria-label^="Работа"] { --gm-folder-color: #22d3ee; } */
+
+/* на акцентной плашке полоска тёмная, чтобы не сливалась с градиентом */
+#folderTree li.selected > .container > .icon::before {
+  background: var(--gm-accent-text) !important;
+}
+
+/* заголовки аккаунтов */
+#folderTree li[data-server-type] > .container > .name {
+  font-weight: 600;
+  color: var(--gm-pane-muted);
+  text-transform: none;
+}
+
+/* ==========================================================================
+   4. ВКЛАДКИ
+   ========================================================================== */
+#tabmail-tabs .tabmail-tab {
+  color: #a9bdb6 !important; /* 9.0:1 на #0F1A17 */
+  font-weight: 500;
+  font-size: 14px;
+}
+#tabmail-tabs .tabmail-tab .tab-background {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 8px 8px 0 0;
+}
+#tabmail-tabs .tabmail-tab:not([selected]):hover {
+  color: #e6f2ee !important;
+}
+#tabmail-tabs .tabmail-tab:not([selected]):hover .tab-background {
+  background: rgba(230, 242, 238, 0.08) !important;
+}
+#tabmail-tabs .tabmail-tab[selected] {
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+}
+#tabmail-tabs .tabmail-tab[selected] .tab-background {
+  background: var(--gm-accent) !important;
+}
+#tabmail-tabs .tabmail-tab[selected] .tab-label,
+#tabmail-tabs .tabmail-tab[selected] .tab-close-button {
+  color: var(--gm-accent-text) !important;
+}
+#tabmail-tabs .tabmail-tab:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: -2px;
+}
+
+/* ==========================================================================
+   5. СПИСОК ПИСЕМ
+   Выбор: карточки (card-layout) + «обычная» плотность.
+   Табличный вид (table-layout) поддержан теми же правилами.
+   ========================================================================== */
+#threadTree,
+#threadTree [is="tree-view-table-body"] {
+  background-color: var(--gm-bg) !important;
+  color: var(--gm-text) !important;
+  scrollbar-color: var(--gm-border) var(--gm-bg);
+}
+
+#threadTree tr:is(.table-layout, .card-layout) {
+  background-color: var(--gm-bg);
+  color: var(--gm-text);
+  border-bottom: 1px solid var(--gm-divider);
+  box-shadow: none;
+}
+#threadTree tr:is(.table-layout, .card-layout) :is(.sender, .date, .correspondent, .datecol-column, .sizecol-column) {
+  color: var(--gm-muted);
+  font-size: 13px;
+}
+#threadTree tr:is(.table-layout, .card-layout):hover:not(.selected) {
+  background-color: #f2f5f4;
+}
+
+/* --- Непрочитанные: жирные, #0A7A5A, точка слева --- */
+#threadTree tr[data-properties~="unread"] {
+  font-weight: 700;
+  color: var(--gm-unread);
+}
+#threadTree tr[data-properties~="unread"] .subject-line,
+#threadTree tr[data-properties~="unread"] .subject,
+#threadTree tr[data-properties~="unread"] .sender {
+  font-weight: 700;
+  color: var(--gm-unread);
+}
+#threadTree tr[data-properties~="unread"] .subject-line::before {
+  content: "";
+  flex: none;
+  inline-size: 8px;
+  block-size: 8px;
+  margin-inline-end: 6px;
+  border-radius: 50%;
+  background: var(--gm-unread);
+}
+
+/* --- Избранное: жёлтая полоска 4px, фон #FFF8E1 --- */
+#threadTree tr[data-properties~="flagged"]:not(.selected) {
+  background-color: var(--gm-fav-bg);
+}
+#threadTree tr[data-properties~="flagged"] {
+  box-shadow: inset 4px 0 0 var(--gm-fav-bar);
+}
+
+/* --- Важно (тег $label1 → класс T_24label1): красная полоска, фон #FFEDEE --- */
+#threadTree tr[data-properties~="T_24label1"]:not(.selected) {
+  background-color: var(--gm-imp-bg);
+}
+#threadTree tr[data-properties~="T_24label1"] {
+  box-shadow: inset 4px 0 0 var(--gm-imp-bar);
+}
+#threadTree tr[data-properties~="T_24label1"] :is(.subject-line, .subject) {
+  color: var(--gm-imp-text) !important; /* 5.8:1 на #FFEDEE */
+}
+
+/* --- Избранное + важно: красный фон + жёлтая звезда, обе полоски --- */
+#threadTree tr[data-properties~="flagged"][data-properties~="T_24label1"] {
+  box-shadow: inset 4px 0 0 var(--gm-imp-bar), inset 8px 0 0 var(--gm-fav-bar);
+}
+
+/* --- Звезда: жёлтая заливка + тёмный контур (иначе 1.7:1) --- */
+#threadTree .button-star,
+#threadTree .tree-view-row-flag img {
+  -moz-context-properties: fill, stroke;
+}
+#threadTree tr[data-properties~="flagged"] .button-star,
+#threadTree tr[data-properties~="flagged"] .tree-view-row-flag img {
+  fill: var(--gm-star) !important;
+  stroke: var(--gm-star-outline) !important;
+  stroke-width: 1.2px;
+}
+/* не отмеченная звезда — различимый контур ≥ 3:1 */
+#threadTree tr:not([data-properties~="flagged"]) .button-star {
+  fill: transparent;
+  stroke: var(--gm-icon);
+  opacity: 0.65;
+}
+
+/* --- Выделенное письмо (панель в фокусе) --- */
+#threadTree tr:is(.table-layout, .card-layout).selected {
+  /* без фокуса панели — бледнее, но с контуром по верху/низу */
+  background-color: var(--gm-sel-bg-inactive) !important;
+  color: var(--gm-text) !important;
+  border-block: 1px solid var(--gm-sel-edge-inactive);
+}
+#threadTree [is="tree-view-table-body"]:is(:focus, :focus-within) > tr.selected,
+#threadTree tr.selected:focus-within {
+  background-color: var(--gm-sel-bg) !important; /* #D6F5EA */
+  border-block-color: var(--gm-unread);
+}
+/* цветные полоски у выделенных сохраняются (box-shadow выше не сбрасывается) */
+#threadTree tr.selected[data-properties~="unread"] :is(.subject-line, .subject, .sender) {
+  color: var(--gm-unread) !important; /* 4.6:1 на #D6F5EA */
+}
+#threadTree tr.selected[data-properties~="T_24label1"] :is(.subject-line, .subject) {
+  color: var(--gm-imp-text) !important; /* 5.6:1 */
+}
+#threadTree tr.selected :is(.sender, .date, .correspondent, .datecol-column) {
+  color: #3f4a46 !important; /* ≥ 7:1 на выделении */
+}
+
+/* --- Свёрнутая ветка с непрочитанными внутри --- */
+#threadTree tr.children.collapsed[data-properties~="hasUnread"],
+#threadTree tr.children.collapsed.hasUnread {
+  font-weight: 700;
+}
+#threadTree tr.children.collapsed:is([data-properties~="hasUnread"], .hasUnread) .twisty::after {
+  content: "";
+  display: inline-block;
+  inline-size: 10px;
+  block-size: 10px;
+  margin-inline-start: 3px;
+  border-radius: 50%;
+  background: var(--gm-accent);
+  box-shadow: 0 0 0 2px var(--gm-bg), 0 0 0 3.5px var(--gm-unread);
+}
+
+/* --- Иконки: вложение, ответ, пересылка, спам — читаемые (≥ 3:1) --- */
+#threadTree :is(.state, .attachment-icon, .button-spam img, .tree-view-row-attach img) {
+  opacity: 1 !important;
+  color: var(--gm-icon);
+  inline-size: 16px;
+  block-size: 16px;
+}
+#threadTree tr[data-properties~="replied"] .state,
+#threadTree tr[data-properties~="forwarded"] .state {
+  color: var(--gm-unread);
+}
+#threadTree tr:not([data-properties~="attach"]) .attachment-icon {
+  opacity: 0 !important;
+}
+#threadTree tr[data-properties~="junk"] {
+  color: var(--gm-muted);
+  background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px);
+}
+#threadTree tr[data-properties~="junk"] .button-spam img {
+  color: var(--gm-imp-text);
+}
+
+/* Теги в списке и в письме — цветные чипсы */
+#threadTree .tag-icon,
+#messageHeader .tag,
+#messageHeader .message-header-tag,
+.tag-list .tag {
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Заголовок списка, сортировка */
+#threadTree .tree-view-header,
+#threadTree [is="tree-view-table-header"] {
+  background: #f7faf9 !important;
+  color: var(--gm-muted) !important;
+  border-bottom: 1px solid var(--gm-divider) !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Видимая обводка фокуса в списке — тёмная, на белом ≥ 3:1 */
+#threadTree tr:focus-visible,
+#threadTree [is="tree-view-table-body"]:focus-visible {
+  outline: 2px solid var(--gm-text);
+  outline-offset: -2px;
+}
+
+/* ==========================================================================
+   6. ОБЛАСТЬ ПИСЬМА
+   Тело письма (HTML) — это content-документ: userChrome его не затрагивает.
+   ========================================================================== */
+#messageHeader,
+#messageHeader .message-header-container {
+  background-color: var(--gm-bg) !important;
+  color: var(--gm-text) !important;
+  border-bottom: 2px solid var(--gm-divider);
+  box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35);
+}
+#messageHeader .message-header-subject,
+#messageHeader .header-subject {
+  font-size: 18px;
+  font-weight: 700;
+}
+#messageHeader :is(.header-label, .message-header-label, .date) {
+  color: var(--gm-muted);
+  font-size: 13px;
+}
+
+/* ==========================================================================
+   7. ТУЛБАР, ПОИСК, ФИЛЬТРЫ
+   ========================================================================== */
+/* «Написать» — акцентная кнопка */
+#button-newmsg,
+#unifiedToolbarContent [data-item-id="write-message"],
+#unifiedToolbarContent [item-id="write-message"] {
+  background: var(--gm-accent) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 0 !important;
+}
+#button-newmsg:hover,
+#unifiedToolbarContent [data-item-id="write-message"]:hover,
+#unifiedToolbarContent [item-id="write-message"]:hover {
+  filter: brightness(1.06) saturate(1.05);
+}
+#button-newmsg:focus-visible,
+#unifiedToolbarContent [data-item-id="write-message"]:focus-visible,
+#unifiedToolbarContent [item-id="write-message"]:focus-visible {
+  outline: 2px solid var(--gm-text);
+  outline-offset: 2px;
+}
+#button-newmsg :is(.toolbarbutton-icon, .toolbarbutton-text, label),
+#unifiedToolbarContent [data-item-id="write-message"] :is(img, span, label) {
+  color: var(--gm-accent-text) !important;
+  fill: currentColor;
+}
+
+/* Поиск и поля ввода: рамка 3:1, фокус — зелёная + кольцо */
+input:is([type="text"], [type="search"], :not([type])),
+textarea,
+search-bar input,
+#qfb-qs-textbox {
+  border: 1px solid var(--gm-border) !important;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--gm-text);
+}
+input:focus-visible,
+textarea:focus-visible,
+search-bar input:focus-visible {
+  border-color: var(--gm-unread) !important;
+  outline: 2px solid var(--gm-unread);
+  outline-offset: 1px;
+}
+::placeholder {
+  color: var(--gm-muted);
+  opacity: 1;
+}
+
+/* Панель быстрых фильтров */
+#quickFilterBarContainer,
+#quick-filter-bar {
+  background: #f7faf9 !important;
+  border-bottom: 1px solid var(--gm-divider) !important;
+}
+#quickFilterBarContainer toolbarbutton[checked="true"],
+#quickFilterBarContainer button[aria-pressed="true"],
+#quick-filter-bar toolbarbutton[checked="true"] {
+  background: var(--gm-sel-bg) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 var(--gm-unread);
+}
+
+/* ==========================================================================
+   ОКНО НАПИСАНИЯ И АДРЕСНАЯ КНИГА
+   ========================================================================== */
+#msgcomposeWindow #button-send,
+#msgcomposeWindow #button-send:not([disabled]) {
+  background: var(--gm-accent) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  border-radius: 8px;
+}
+#msgcomposeWindow #headers-box,
+#msgcomposeWindow #recipientsContainer {
+  background: #f7faf9;
+  border-bottom: 1px solid var(--gm-divider);
+}
+#msgcomposeWindow .address-pill {
+  background: var(--gm-sel-bg);
+  color: var(--gm-accent-text);
+  border: 1px solid var(--gm-unread);
+  border-radius: 999px;
+}
+#msgcomposeWindow .address-pill[selected] {
+  background: var(--gm-unread);
+  color: #ffffff;
+}
+
+/* адресная книга: список книг тёмный как папки, карточки/детали белые */
+#booksPane,
+#booksPane #books {
+  background-color: var(--gm-pane-bg) !important;
+  color: var(--gm-pane-text) !important;
+}
+#booksPane li.selected > .container,
+#booksPane .selected {
+  background: var(--gm-accent) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+}
+#cardsPane,
+#detailsPane {
+  background: var(--gm-bg);
+  color: var(--gm-text);
+}
+#cardsPane .selected {
+  background: var(--gm-sel-bg) !important;
+  box-shadow: inset 4px 0 0 var(--gm-unread);
+}
+
+/* ==========================================================================
+   ВСПЛЫВАЮЩИЕ МЕНЮ, ДИАЛОГИ, УВЕДОМЛЕНИЯ, СКРОЛЛБАРЫ
+   ========================================================================== */
+menupopup,
+panel {
+  --panel-background: #ffffff;
+  --panel-color: var(--gm-text);
+  --panel-border-color: #c9d3cf;
+  --arrowpanel-background: #ffffff;
+  --arrowpanel-color: var(--gm-text);
+  --arrowpanel-border-color: #c9d3cf;
+  --panel-shadow: 0 8px 24px rgba(15, 26, 23, 0.22);
+  --panel-border-radius: 10px;
+  --menuitem-hover-background-color: var(--gm-sel-bg);
+  --menuitem-hover-color: var(--gm-accent-text);
+}
+menupopup > :is(menuitem, menu)[_moz-menuactive="true"]:not([disabled="true"]) {
+  background-color: var(--gm-sel-bg) !important;
+  color: var(--gm-accent-text) !important;
+}
+menupopup > :is(menuitem, menu)[disabled="true"] {
+  color: var(--gm-muted) !important;
+}
+
+dialog {
+  background: #ffffff;
+  color: var(--gm-text);
+}
+dialog button[dlgtype="accept"],
+dialog button[default="true"] {
+  background: var(--gm-accent) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  border: 0 !important;
+  border-radius: 8px;
+}
+dialog button:focus-visible {
+  outline: 2px solid var(--gm-text);
+  outline-offset: 2px;
+}
+
+notification-message,
+.notification {
+  background: #f2fbf8 !important;
+  color: var(--gm-text) !important;
+  border: 1px solid var(--gm-unread) !important;
+  border-inline-start: 6px solid var(--gm-unread) !important;
+  border-radius: 8px;
+}
+notification-message[type="warning"] {
+  background: var(--gm-fav-bg) !important;
+  border-color: var(--gm-star-outline) !important;
+}
+notification-message:is([type="critical"], [type="error"]) {
+  background: var(--gm-imp-bg) !important;
+  border-color: var(--gm-imp-bar) !important;
+}
+
+/* скроллбары: заметные (≥ 3:1) */
+* {
+  scrollbar-color: var(--gm-border) transparent;
+}
+
+/* Уважаем «уменьшить анимацию» */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
