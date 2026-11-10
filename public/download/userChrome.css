@@ -613,22 +613,22 @@ button {
   fill: currentColor !important;
 }
 
-/* Поиск и поля ввода: рамка 3:1, фокус — зелёная + кольцо */
+/* Обычные поля ввода: рамка 3:1, фокус — зелёное кольцо.
+   Намеренно без !important: это запасной стиль, он не должен ломать поля внутри
+   составных виджетов (получатели в окне написания, мини-календарь и т.п.).
+   Поля поиска (search-bar) настраиваются переменными в разделе «Современные кнопки». */
 input:is([type="text"], [type="search"], :not([type])),
-textarea,
-search-bar input,
-#qfb-qs-textbox {
-  border: 1px solid var(--gm-border) !important;
-  border-radius: 8px !important;
-  background: #ffffff !important;
-  color: var(--gm-text) !important;
+textarea {
+  border: 1px solid var(--gm-border);
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: var(--gm-text);
 }
 input:focus-visible,
-textarea:focus-visible,
-search-bar input:focus-visible {
-  border-color: var(--gm-unread) !important;
-  outline: 2px solid var(--gm-unread) !important;
-  outline-offset: 1px !important;
+textarea:focus-visible {
+  border-color: var(--gm-unread);
+  outline: 2px solid var(--gm-unread);
+  outline-offset: 1px;
 }
 ::placeholder {
   color: var(--gm-muted) !important;
@@ -642,15 +642,130 @@ search-bar input:focus-visible {
   color: var(--gm-text) !important; /* штатно — цвет текста вкладок */
   border-bottom: 1px solid var(--gm-divider) !important;
 }
+
+/* ==========================================================================
+   СОВРЕМЕННЫЕ КНОПКИ
+   Плоские, без рамок и серых подложек: значок + подпись, скругление 8px,
+   при наведении — мягкая мятная подложка. Штатные кнопки Thunderbird
+   настраиваются переменными --button-*, поэтому задаём их на контейнерах.
+   ========================================================================== */
+:root {
+  --gm-btn-radius: 8px;
+  --gm-btn-hover: rgba(10, 122, 90, 0.1);
+  --gm-btn-active: rgba(10, 122, 90, 0.2);
+}
+
+/* --- Панель фильтров и заголовок списка писем --- */
+#quick-filter-bar,
+#threadPaneHeaderBar {
+  --button-background-color: transparent !important;
+  --button-border-color: transparent !important;
+  --button-border-radius: var(--gm-btn-radius) !important;
+  --button-text-color: var(--gm-text) !important;
+  --button-hover-text-color: var(--gm-text) !important;
+  --button-hover-background-color: var(--gm-btn-hover) !important;
+  --button-active-background-color: var(--gm-btn-active) !important;
+  --button-pressed-shadow: none !important;
+  --button-pressed-indicator-padding: 0px !important; /* место под штатную «пилюлю»-индикатор */
+  --toolbar-button-hover-background-color: var(--gm-btn-hover) !important;
+  --toolbar-button-hover-border-color: transparent !important;
+  --toolbar-button-hover-checked-color: var(--gm-btn-active) !important;
+}
+:is(#quick-filter-bar, #threadPaneHeaderBar) .button:not(.qfb-tag-button) {
+  border-color: transparent !important;
+  border-radius: var(--gm-btn-radius) !important;
+  box-shadow: none !important;
+}
+/* штатный индикатор-«пилюля» слева от значка — убран, состояние видно по заливке */
+:is(#quick-filter-bar, #threadPaneHeaderBar) .check-button::before {
+  display: none !important;
+}
+/* группа фильтров: без общей рамки и перегородок, кнопки с небольшим зазором */
+#quick-filter-bar .button-group {
+  border-color: transparent !important;
+  gap: 2px !important;
+}
+#quick-filter-bar .button-group .button {
+  border: 0 !important;
+  border-radius: var(--gm-btn-radius) !important;
+}
 /* Включённый фильтр. Только background-color: значки кнопок — это
    background-image, сокращённое `background` их стирает. */
-#quick-filter-bar .check-button[aria-pressed="true"],
+:is(#quick-filter-bar, #threadPaneHeaderBar) .check-button[aria-pressed="true"],
 #quick-filter-bar toolbarbutton[checked="true"] {
   background-color: var(--gm-sel-bg) !important;
-  border-color: var(--gm-unread) !important;
-  color: var(--gm-accent-text) !important;
+  color: var(--gm-accent-text) !important; /* 14:1 */
+  font-weight: 600 !important;
+  box-shadow: inset 0 0 0 1px var(--gm-unread) !important;
+}
+:is(#quick-filter-bar, #threadPaneHeaderBar) .check-button[aria-pressed="true"]:hover {
+  background-color: #c2efdf !important;
+}
+:is(#quick-filter-bar, #threadPaneHeaderBar) .button:focus-visible {
+  outline: 2px solid var(--gm-unread) !important;
+  outline-offset: 1px !important;
+}
+
+/* --- Поля поиска (внутри — shadow DOM, настраиваются переменными) --- */
+search-bar {
+  --button-border-radius: 10px !important;
+  --search-bar-color: var(--gm-text) !important;
+  --search-bar-background: #f2f5f4 !important;
+  --search-bar-focus-background: #ffffff !important;
+  --search-bar-border-color: transparent !important;
+  --search-focus-outline-color: var(--gm-unread) !important;
+}
+search-bar:hover {
+  --search-bar-border-color: var(--gm-border) !important;
+}
+
+/* --- Кнопки в шапке письма: «Ответить», «Переслать», «Архивировать»… --- */
+#header-view-toolbar {
+  gap: 2px !important;
+}
+#messageHeader .message-header-view-button,
+#messageHeader .message-header-view-button > .toolbarbutton-menubutton-button,
+#messageHeader .message-header-view-button > .toolbarbutton-menubutton-dropmarker {
+  appearance: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--gm-btn-radius) !important;
+  box-shadow: none !important;
+  color: var(--gm-text) !important;
+}
+#messageHeader .message-header-view-button:not([is="toolbarbutton-menu-button"]),
+#messageHeader .message-header-view-button > .toolbarbutton-menubutton-button {
+  padding: 4px 8px !important;
+}
+#messageHeader .message-header-view-button .toolbarbutton-text {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+#messageHeader .message-header-view-button:not([is="toolbarbutton-menu-button"], [disabled="true"]):hover,
+#messageHeader .message-header-view-button:not([disabled="true"]) > :is(.toolbarbutton-menubutton-button, .toolbarbutton-menubutton-dropmarker):hover,
+#messageHeader .message-header-view-button[open] {
+  background-color: var(--gm-btn-hover) !important;
+}
+#messageHeader .message-header-view-button:not([is="toolbarbutton-menu-button"], [disabled="true"]):hover:active,
+#messageHeader .message-header-view-button:not([disabled="true"]) > :is(.toolbarbutton-menubutton-button, .toolbarbutton-menubutton-dropmarker):hover:active,
+#messageHeader .message-header-view-button[checked="true"] {
+  background-color: var(--gm-btn-active) !important;
+}
+#messageHeader .message-header-view-button:focus-visible {
+  outline: 2px solid var(--gm-unread) !important;
+  outline-offset: 1px !important;
+}
+/* главное действие — «Ответить»: мятная заливка, при наведении — акцент */
+#messageHeader :is(#hdrReplyToSenderButton, #hdrReplyButton):not([disabled="true"]) {
+  background-color: var(--gm-sel-bg) !important;
+  color: var(--gm-accent-text) !important; /* 14:1 */
+}
+#messageHeader :is(#hdrReplyToSenderButton, #hdrReplyButton):not([disabled="true"]) .toolbarbutton-text {
   font-weight: 700 !important;
-  box-shadow: inset 0 -3px 0 var(--gm-unread) !important;
+}
+#messageHeader :is(#hdrReplyToSenderButton, #hdrReplyButton):not([disabled="true"]):hover {
+  background-color: var(--gm-accent-from) !important; /* текст #062018 — 11:1 */
 }
 
 /* ==========================================================================
@@ -833,4 +948,10 @@ notification-message:is([type="critical"], [type="error"]) {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* кнопка «Создать» над папками — в общем стиле: скругление 8px, плотный текст */
+#folderPaneWriteMessage {
+  border-radius: var(--gm-btn-radius) !important;
+  font-weight: 600 !important;
 }
