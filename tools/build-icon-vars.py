@@ -26,7 +26,6 @@ ROOT_MAP = {
     "star": "flame-off", "star-sm": "flame-off",
     "unread": "mail-unread", "address-book": "contacts",
     "reply-list": "reply-all",
-    "tag": "tag", "tag-sm": "tag",
     "attachment": "clip", "attachment-sm": "clip",
     "reply": "reply", "reply-all": "reply-all", "forward": "forward",
     "archive": "archive", "pin": "pin",
@@ -68,7 +67,8 @@ def block() -> str:
         f"  --gm-flame-on: {data_uri('flame-on')};",
         f"  --gm-flame-off-light: {data_uri('flame-off-light')};",
         "}",
-        "#folderTree {", decl({k: v for k, v in FOLDER_LIGHT.items()}), "}",
+        "#qfb-tags {", decl({"tag": "tag"}), "}",
+        "#folderTree {", decl(FOLDER_LIGHT), "}",
         "#folderTree li.selected {", decl(FOLDER_DARK), "}",
         END,
     ])

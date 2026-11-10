@@ -176,7 +176,7 @@ export default function App() {
         <div className="relative mx-auto max-w-7xl px-4 pt-14 pb-12 sm:px-6">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#1F2F2A] bg-[#14221E] px-3 py-1 text-[13px] text-[#A9BDB6]">
             <span className="h-2 w-2 rounded-full" style={{ background: C.accentFrom }} />
-            Thunderbird 128+ · Betterbird · v1.3.0
+            Thunderbird 128+ · Betterbird · v1.3.1
           </div>
           <h1 className="max-w-3xl text-[44px] leading-[1.05] font-extrabold tracking-tight text-[#E6F2EE] sm:text-[56px]">
             Тема <span style={{ background: ACCENT, WebkitBackgroundClip: "text", color: "transparent" }}>GlowMail</span> для Thunderbird
@@ -290,7 +290,7 @@ export default function App() {
               ))}
             </ol>
             <div className="self-start rounded-xl border border-[#1F2F2A] bg-[#14221E] p-4 text-[14px] leading-relaxed text-[#A9BDB6]">
-              XPI включает стили, иконки и шрифт Inter. Версия 1.3.0 проверена в Betterbird 153.6.0.
+              XPI включает стили, иконки и шрифт Inter. Версия 1.3.1 проверена в Betterbird 153.6.0.
             </div>
           </div>
         </Section>
@@ -306,7 +306,7 @@ export default function App() {
       </Section>
 
       <footer className="border-t border-[#1F2F2A] py-8 text-center text-[13px] text-[#8FA39C]" style={{ background: C.paneBg }}>
-        GlowMail 1.3.0 · тема XPI · Inter
+        GlowMail 1.3.1 · тема XPI · Inter
       </footer>
     </div>
   );

@@ -1,7 +1,7 @@
 # GlowMail — тема для Thunderbird / Betterbird
 
 Тёмная панель папок с мятно-бирюзовым акцентом, светлый список писем и письмо.
-Thunderbird 128+ / Betterbird. Версия 1.3.0 проверена в Betterbird 153.6.0.
+Thunderbird 128+ / Betterbird. Версия 1.3.1 проверена в Betterbird 153.6.0.
 
 ![GlowMail: три панели — папки, список, письмо](docs/screenshots/02-mock.png)
 
