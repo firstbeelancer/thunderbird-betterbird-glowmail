@@ -1,44 +1,45 @@
 # GlowMail — тема для Thunderbird / Betterbird
 
 Тёмная панель папок с мятно-бирюзовым акцентом, светлый список писем и письмо.
-Версия 1.0, Thunderbird 128+ и Betterbird, контраст WCAG AA.
+Thunderbird 128+ / Betterbird, WCAG AA, версия 1.0.
 
-## Что внутри
+## Из чего состоит
 
-| Папка / файл | Что это |
-|---|---|
-| `theme/` | Сама тема: `manifest.json` (WebExtension-тема) + `chrome/userChrome.css` (список писем, папки, окно письма) + `INSTALL.md` |
-| `src/` + `index.html` + `vite.config.ts` | Стенд-спецификация на Vite + React 19: живой макет, состояния для приёмки, проверка контраста, кнопки скачивания файлов темы |
-| `public/download/` | Копии `userChrome.css` и `INSTALL.md` для стенда |
-| `AGENTS.md` | Короткие правила для агентов, работающих над темой |
-
-## Установка
+| Часть | Что красит | Файл |
+|---|---|---|
+| WebExtension-тема | рамка окна, вкладки, панели инструментов, меню, поля | `theme/manifest.json` → `glowmail-theme.xpi` |
+| userChrome.css | список писем, папки, акцентные плашки, бейджи, окно письма, написание, адресная книга | `theme/chrome/userChrome.css` + `theme/chrome/fonts/` |
 
 Полная инструкция — в [`theme/INSTALL.md`](theme/INSTALL.md).
 
-Коротко:
-1. Соберите `glowmail-theme.xpi` из `theme/manifest.json` (zip) и установите через «Дополнения и темы → Установить дополнение из файла».
-2. Включите `toolkit.legacyUserProfileCustomizations.stylesheets = true` в Редакторе конфигурации.
-3. Скопируйте `theme/chrome/userChrome.css` (и папку `fonts/`, когда она появится) в `<профиль>/chrome/`.
-4. Перезапустите Thunderbird / Betterbird.
+Коротко: тему `.xpi` ставят через «Дополнения и темы → Установить дополнение из файла», а `userChrome.css` кладут в `<профиль>/chrome/` и включают `toolkit.legacyUserProfileCustomizations.stylesheets = true`. Релизный Thunderbird принимает только подписанные дополнения — варианты подписи описаны в `INSTALL.md`.
 
-Релизный Thunderbird принимает только подписанные `.xpi` — либо публикация на addons.thunderbird.net, либо временная загрузка через `about:debugging`, либо `xpinstall.signatures.required = false` на Betterbird / ESR.
+## Стенд-спецификация
 
-## Известная проблема (v1.0)
+В репозитории лежит и сайт-стенд (Vite + React 19 + Tailwind 4, `src/`): живой макет трёх панелей, состояния для приёмки, проверка контраста, решения по ТЗ и кнопки скачивания. Файлы `.xpi` / `userChrome.css` / архив с шрифтом собираются прямо в браузере из исходников темы (`src/lib/zip.ts`).
 
-В архиве **нет шрифтов Inter**: `userChrome.css` и стенд ссылаются на `theme/chrome/fonts/Inter-latin.woff2` и `Inter-cyrillic.woff2`, но папки `fonts/` в комплекте нет.
+```bash
+npm install
+npm run dev     # стенд
+npm run build   # сборка в dist/ (один index.html)
+```
 
-Что это значит:
-- `userChrome.css` работает, но шрифт падает на запасной `system-ui` вместо GlowMail Inter;
-- сборка стенда (`npm run build`) не проходит без этих файлов — `src/components/Downloads.tsx` импортирует их напрямую;
-- кнопка скачивания `glowmail-userchrome.zip` на стенде тоже не соберётся без шрифтов.
+## Структура
 
-Шрифты не выдумывать и не подменять другими файлами — нужно добавить настоящие variable woff2 Inter (латиница + кириллица) в `theme/chrome/fonts/`.
+```
+theme/                  # источник правды: тема и userChrome
+  manifest.json
+  INSTALL.md
+  chrome/userChrome.css
+  chrome/fonts/         # Inter (variable, латиница + кириллица), OFL
+src/                    # стенд-спецификация
+public/download/        # копии userChrome.css и INSTALL.md для скачивания со стенда
+```
 
-## Проверка перед публикацией
+`public/download/` — копия файлов из `theme/`, держите их в синхроне (сверяйте md5).
 
-Перед каждым коммитом / публикацией проверить, что в репозиторий не попало никаких ключей и секретов (см. `AGENTS.md`). В проверенном архиве v1.0 секретов не найдено.
+## Примечание от 10.11.2026
 
-## Статус
+В исходном архиве не хватало `theme/chrome/fonts/Inter-*.woff2`, из-за чего `npm run build` падал (`Could not resolve ... Inter-latin.woff2`). Шрифты восстановлены из уже заявленной зависимости `@fontsource-variable/inter` (Inter, SIL OFL) — `inter-latin-wght-normal.woff2` и `inter-cyrillic-wght-normal.woff2`. После этого сборка проходит, `manifest.json` валиден, `userChrome.css` — 648 строк, скобки сходятся, секретов в репозитории не найдено (проверка перед публикацией — см. `AGENTS.md`).
 
-Маленькая тема, дорабатывается потихоньку, неспешно. Проект в TigerWiki для неё не заводится.
+Лицензия репозитория пока не выбрана.
