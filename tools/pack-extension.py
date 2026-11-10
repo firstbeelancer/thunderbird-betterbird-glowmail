@@ -58,6 +58,10 @@ def main() -> None:
         for p in sorted(stage.rglob("*")):
             if p.is_file():
                 z.write(p, p.relative_to(stage))
+    # То же содержимое под именем .xpi — именно на него ссылается
+    # update_link в updates.json (GitHub Releases, v<версия>).
+    xpi = DIST / f"glowmail-{version}.xpi"
+    shutil.copy2(out, xpi)
     print(f"packed {out} ({out.stat().st_size} bytes), {len(files)} chrome files")
     print("chrome files:", ", ".join(files))
     return 0
