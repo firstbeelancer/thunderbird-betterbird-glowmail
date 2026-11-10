@@ -8,8 +8,8 @@
    (см. INSTALL.md).
 
    Контраст (WCAG 2.2 AA): текст ≥ 4.5:1, иконки/рамки ≥ 3:1.
-   Селекторы сверены с исходниками Betterbird 140 / Thunderbird 128+ (about3Pane,
-   thread-card, thread-row, folder-tree-row, list-container.css, threadCard.css). Если что-то не подхватилось после обновления —
+   Селекторы проверены по исходникам Thunderbird 128 (about3Pane, thread-row,
+   folder-tree-row, threadPane.css). Если что-то не подхватилось после обновления —
    откройте Browser Toolbox (Ctrl+Shift+Alt+I) и сверьте классы.
    ========================================================================== */
 
@@ -39,7 +39,6 @@
   --gm-pane-muted: #8fa39c;
   --gm-pane-hover: rgba(230, 242, 238, 0.09);
   --gm-pane-focus: #ffffff;
-  --gm-tab-text: #c6d6d0; /* неактивные вкладки на тёмной полосе */
   /* акцент */
   --gm-accent-from: #2ee6a8;
   --gm-accent-to: #22d3ee;
@@ -54,8 +53,6 @@
   --gm-icon: #4a5652; /* иконки списка: ≥ 7:1 */
   /* состояния писем */
   --gm-unread: #0a7a5a;
-  --gm-unread-to: #0e7490; /* конец градиента непрочитанных: 5.4:1 на белом */
-  --gm-unread-gradient: linear-gradient(90deg, var(--gm-unread) 0, var(--gm-unread-to) 360px);
   --gm-fav-bg: #fff8e1;
   --gm-fav-bar: #f5b700;
   --gm-star: #f5b700;
@@ -106,30 +103,30 @@ button {
 #folderTree {
   background-color: var(--gm-pane-bg) !important;
   color: var(--gm-pane-text) !important;
-  scrollbar-color: var(--gm-pane-muted) var(--gm-pane-bg) !important;
+  scrollbar-color: var(--gm-pane-muted) var(--gm-pane-bg);
 }
 
 #folderTree li > .container {
-  position: relative !important;
-  min-height: 32px !important;
-  margin-inline: 8px !important;
-  border-radius: 8px !important;
-  color: var(--gm-pane-text) !important;
+  position: relative;
+  min-height: 32px;
+  margin-inline: 8px;
+  border-radius: 8px;
+  color: var(--gm-pane-text);
 }
 :root[uidensity="compact"] #folderTree li > .container {
-  min-height: 28px !important;
+  min-height: 28px;
 }
 :root[uidensity="touch"] #folderTree li > .container {
-  min-height: 40px !important;
+  min-height: 40px;
 }
 
 #folderTree .name {
-  color: inherit !important;
+  color: inherit;
 }
 #folderTree .total-count,
 #folderTree .folder-size {
   color: var(--gm-pane-muted) !important; /* 6.7:1 на #0F1A17, 12px+ */
-  font-size: 12px !important;
+  font-size: 12px;
 }
 
 /* наведение */
@@ -140,32 +137,24 @@ button {
 /* папка с непрочитанными */
 #folderTree li.unread > .container > .name,
 #folderTree li.new-messages > .container > .name {
-  font-weight: 700 !important;
+  font-weight: 700;
   color: var(--gm-pane-text) !important;
 }
 
 /* активная папка: акцентная плашка + жирный текст */
-/* Плашка не зависит от фокуса панели: без этого правила штатный стиль при
-   светлой схеме красит выбранную папку светло-серым, а текст остаётся светлым. */
-#folderTree li.selected > .container,
-#folderTree:focus-within li.selected > .container,
-#folderTree li.selected.current > .container {
+#folderTree li.selected > .container {
   background: var(--gm-accent) !important;
-  border-color: transparent !important;
   color: var(--gm-accent-text) !important;
-  fill: var(--gm-accent-text) !important;
-  font-weight: 700 !important;
-  --indicator-background: var(--gm-accent-from) !important;
-  --indicator-border: var(--gm-accent-from) !important;
+  font-weight: 700;
 }
 #folderTree li.selected > .container .name,
 #folderTree li.selected > .container .total-count,
 #folderTree li.selected > .container .folder-size {
   color: var(--gm-accent-text) !important;
-  font-weight: 700 !important;
+  font-weight: 700;
 }
 #folderTree li.selected > .container .icon {
-  color: var(--gm-accent-text) !important;
+  color: var(--gm-accent-text);
   --icon-color: var(--gm-accent-text) !important;
 }
 
@@ -176,25 +165,20 @@ button {
   outline-offset: 2px !important;
 }
 #folderTree li > .container:focus-visible {
-  outline: 2px solid var(--gm-pane-focus) !important;
-  outline-offset: 1px !important;
+  outline: 2px solid var(--gm-pane-focus);
+  outline-offset: 1px;
 }
 
 /* счётчик непрочитанных — яркий бейдж */
 #folderTree .unread-count {
   background: var(--gm-accent) !important;
-  border-color: transparent !important; /* штатный «контурный» вариант у свёрнутых веток */
-  color: var(--gm-accent-text) !important; /* 11:1 на акценте */
-  font-weight: 700 !important;
-  font-size: 12px !important;
-  min-width: 20px !important;
-  padding: 1px 7px !important;
-  border-radius: 999px !important;
-  text-align: center !important;
-}
-/* общее число писем — спокойный текст без плашки */
-#folderTree .total-count {
-  background: transparent !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  font-size: 12px;
+  min-width: 20px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  text-align: center;
 }
 /* на акцентной плашке бейдж инвертируется */
 #folderTree li.selected > .container > .unread-count {
@@ -206,78 +190,65 @@ button {
    1) если пользователь задал цвет папки штатно (Folder → Properties → Color),
       полоска берёт его из --icon-color иконки;
    2) иначе — цвет по типу папки. */
-#folderTree li:not([data-is-busy], [data-has-error]) > .container > .icon::before {
-  content: "" !important;
-  position: absolute !important; /* относительно .icon (16×16, position: relative) */
-  inset-block: -4px !important;
-  inset-inline-start: -6px !important;
-  width: 3px !important;
-  border-radius: 2px !important;
-  background: var(--gm-folder-color, transparent) !important;
+#folderTree li > .container > .icon::before {
+  content: "";
+  position: absolute;
+  inset-block: 7px;
+  inset-inline-start: -8px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--gm-folder-color, transparent);
 }
-#folderTree li:not([data-is-busy], [data-has-error]) > .container > .icon[style*="--icon-color"]::before {
-  background: var(--icon-color) !important;
+#folderTree li > .container > .icon[style*="--icon-color: #"]::before,
+#folderTree li > .container > .icon[style*="--icon-color: rgb"]::before {
+  background: var(--icon-color);
 }
-#folderTree li[data-folder-type="inbox"] > .container { --gm-folder-color: #2ee6a8; }
-#folderTree li[data-folder-type="drafts"] > .container { --gm-folder-color: #ffc857; }
-#folderTree li[data-folder-type="sent"] > .container { --gm-folder-color: #7aa2ff; }
-#folderTree li[data-folder-type="archive"] > .container { --gm-folder-color: #b58cff; }
-#folderTree li[data-folder-type="templates"] > .container { --gm-folder-color: #f28ce0; }
-#folderTree li[data-folder-type="outbox"] > .container { --gm-folder-color: #ff9f5a; }
-#folderTree li[data-folder-type="junk"] > .container { --gm-folder-color: #ff7a85; }
-#folderTree li[data-folder-type="trash"] > .container { --gm-folder-color: #8fa39c; }
-/* цвет задаётся на .container, а не на li — иначе его наследуют все подпапки.
-   пример для своей папки по имени:
-   #folderTree li[aria-label^="Работа"] > .container { --gm-folder-color: #22d3ee; } */
+#folderTree li[data-folder-type="inbox"] { --gm-folder-color: #2ee6a8; }
+#folderTree li[data-folder-type="drafts"] { --gm-folder-color: #ffc857; }
+#folderTree li[data-folder-type="sent"] { --gm-folder-color: #7aa2ff; }
+#folderTree li[data-folder-type="archive"] { --gm-folder-color: #b58cff; }
+#folderTree li[data-folder-type="templates"] { --gm-folder-color: #f28ce0; }
+#folderTree li[data-folder-type="outbox"] { --gm-folder-color: #ff9f5a; }
+#folderTree li[data-folder-type="junk"] { --gm-folder-color: #ff7a85; }
+#folderTree li[data-folder-type="trash"] { --gm-folder-color: #8fa39c; }
+/* пример для своей папки по имени:
+   #folderTree li[aria-label^="Работа"] { --gm-folder-color: #22d3ee; } */
 
 /* на акцентной плашке полоска тёмная, чтобы не сливалась с градиентом */
-#folderTree li.selected:not([data-is-busy], [data-has-error]) > .container > .icon::before {
+#folderTree li.selected > .container > .icon::before {
   background: var(--gm-accent-text) !important;
 }
 
 /* заголовки аккаунтов */
-#folderTree li[data-server-type]:not(.selected) > .container > .name {
-  font-weight: 600 !important;
-  color: var(--gm-pane-muted) !important;
-  text-transform: none !important;
+#folderTree li[data-server-type] > .container > .name {
+  font-weight: 600;
+  color: var(--gm-pane-muted);
+  text-transform: none;
 }
 
 /* ==========================================================================
    4. ВКЛАДКИ
    ========================================================================== */
-/* Полоса вкладок всегда тёмная, как панель папок. Без этого при системном
-   заголовке окна (меню «Файл / Правка…» сверху) Thunderbird красит её цветом
-   панели инструментов — светло-серым, и светлый текст вкладок на ней пропадает. */
-#tabs-toolbar {
-  background: var(--gm-pane-bg) !important;
-  box-shadow: none !important;
-  color: var(--gm-tab-text) !important;
-}
-#tabs-toolbar toolbarbutton {
-  color: var(--gm-tab-text) !important;
-  fill: currentColor !important;
-}
 #tabmail-tabs .tabmail-tab {
-  color: var(--gm-tab-text) !important; /* 12:1 на #0F1A17 */
-  font-weight: 500 !important;
-  font-size: 14px !important;
+  color: #a9bdb6 !important; /* 9.0:1 на #0F1A17 */
+  font-weight: 500;
+  font-size: 14px;
 }
 #tabmail-tabs .tabmail-tab .tab-background {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
-  border-radius: 8px 8px 0 0 !important;
+  border-radius: 8px 8px 0 0;
 }
-/* наведение: текст белый, под вкладкой лёгкая подложка — ярче, а не бледнее */
 #tabmail-tabs .tabmail-tab:not([selected]):hover {
-  color: #ffffff !important;
+  color: #e6f2ee !important;
 }
 #tabmail-tabs .tabmail-tab:not([selected]):hover .tab-background {
-  background: rgba(230, 242, 238, 0.14) !important;
+  background: rgba(230, 242, 238, 0.08) !important;
 }
 #tabmail-tabs .tabmail-tab[selected] {
   color: var(--gm-accent-text) !important;
-  font-weight: 700 !important;
+  font-weight: 700;
 }
 #tabmail-tabs .tabmail-tab[selected] .tab-background {
   background: var(--gm-accent) !important;
@@ -287,8 +258,8 @@ button {
   color: var(--gm-accent-text) !important;
 }
 #tabmail-tabs .tabmail-tab:focus-visible {
-  outline: 2px solid #ffffff !important;
-  outline-offset: -2px !important;
+  outline: 2px solid #ffffff;
+  outline-offset: -2px;
 }
 
 /* ==========================================================================
@@ -296,151 +267,62 @@ button {
    Выбор: карточки (card-layout) + «обычная» плотность.
    Табличный вид (table-layout) поддержан теми же правилами.
    ========================================================================== */
-#threadTree {
-  --tree-pane-background: var(--gm-bg) !important;
-  --tree-card-background: transparent !important;
-  --unread-color: var(--gm-unread) !important;
-}
 #threadTree,
 #threadTree [is="tree-view-table-body"] {
   background-color: var(--gm-bg) !important;
   color: var(--gm-text) !important;
-  scrollbar-color: var(--gm-border) var(--gm-bg) !important;
+  scrollbar-color: var(--gm-border) var(--gm-bg);
 }
 
 #threadTree tr:is(.table-layout, .card-layout) {
-  background-color: var(--gm-bg) !important;
-  color: var(--gm-text) !important;
-  border-bottom: 1px solid var(--gm-divider) !important;
-  box-shadow: none !important;
-  /* полоска слева и контур выделения рисуются на ячейках (см. ниже) */
-  --gm-strip: 0 0 transparent;
-  --gm-edge: 0 0 transparent;
-}
-#threadTree tr:is(.table-layout, .card-layout) > td {
-  box-shadow: var(--gm-edge) !important;
-}
-#threadTree tr:is(.table-layout, .card-layout) > td:first-child {
-  box-shadow: var(--gm-strip), var(--gm-edge) !important;
-}
-
-/* --- Карточки: плоские строки во всю ширину вместо «коробочек» с рамкой.
-   Цвет состояния красит всю строку (tr), сама карточка прозрачная. --- */
-#threadTree .card-layout > td {
-  border-bottom: 1px solid var(--gm-divider) !important;
-}
-#threadTree .card-layout > td > .card-container {
-  background-color: transparent !important;
-  border-color: transparent !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-#threadTree .card-layout > td > .card-container::before {
-  display: none !important; /* штатный индикатор выделения: его заменяют полоски и контур */
+  background-color: var(--gm-bg);
+  color: var(--gm-text);
+  border-bottom: 1px solid var(--gm-divider);
+  box-shadow: none;
 }
 #threadTree tr:is(.table-layout, .card-layout) :is(.sender, .date, .correspondent, .datecol-column, .sizecol-column) {
-  color: var(--gm-muted) !important;
-  font-size: 13px !important;
+  color: var(--gm-muted);
+  font-size: 13px;
 }
-/* в карточке отправитель — первая строка, основной цвет текста */
-#threadTree tr.card-layout .card-container .sender {
-  color: var(--gm-text) !important;
-  font-size: 14px !important;
-}
-#threadTree tr:is(.table-layout, .card-layout):hover:not(.selected, [data-properties~="flagged"], [data-properties~="tagged"]) {
-  background-color: #f2f5f4 !important;
+#threadTree tr:is(.table-layout, .card-layout):hover:not(.selected) {
+  background-color: #f2f5f4;
 }
 
 /* --- Непрочитанные: жирные, #0A7A5A, точка слева --- */
 #threadTree tr[data-properties~="unread"] {
-  font-weight: 700 !important;
-  color: var(--gm-unread) !important;
+  font-weight: 700;
+  color: var(--gm-unread);
 }
 #threadTree tr[data-properties~="unread"] .subject-line,
 #threadTree tr[data-properties~="unread"] .subject,
 #threadTree tr[data-properties~="unread"] .sender {
-  font-weight: 700 !important;
-  color: var(--gm-unread) !important;
+  font-weight: 700;
+  color: var(--gm-unread);
 }
-#threadTree .card-layout[data-properties~="unread"] {
-  --read-status-fill: var(--gm-unread) !important;
-  --read-status-stroke: var(--gm-unread) !important;
-}
-/* в т.ч. для «новых», штатно синих; у писем с меткой тема остаётся в цвете метки */
-#threadTree tr.card-layout[data-properties~="unread"] .card-container .sender,
-#threadTree tr.card-layout[data-properties~="unread"]:not([data-properties~="tagged"]) .card-container .subject {
-  color: var(--gm-unread) !important;
-}
-/* непрочитанные чуть крупнее (15px при базовых 14px) */
-#threadTree tr.card-layout[data-properties~="unread"] .card-container :is(.sender, .subject) {
-  font-size: 15px !important;
-}
-#threadTree .table-layout[data-properties~="unread"] .subject-line > span {
-  font-size: 15px !important;
-}
-/* лёгкий градиент текста: зелёный → тёмная бирюза на первых 360px строки.
-   Оба края ≥ 4.5:1 на белом и на выделении; color остаётся запасным цветом. */
-#threadTree tr.card-layout[data-properties~="unread"] .card-container .sender,
-#threadTree tr.card-layout[data-properties~="unread"]:not([data-properties~="tagged"]) .card-container .subject,
-#threadTree .table-layout[data-properties~="unread"]:not([data-properties~="tagged"], .selected) .subject-line > span {
-  background-image: var(--gm-unread-gradient) !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-}
-@media (forced-colors) {
-  #threadTree tr[data-properties~="unread"] :is(.sender, .subject, .subject-line > span) {
-    background-image: none !important;
-    -webkit-text-fill-color: currentColor !important;
-  }
-}
-#threadTree .table-layout[data-properties~="unread"] .subject-line::before {
-  content: "" !important;
-  flex: none !important;
-  inline-size: 8px !important;
-  block-size: 8px !important;
-  margin-inline-end: 6px !important;
-  border-radius: 50% !important;
-  background: var(--gm-unread) !important;
+#threadTree tr[data-properties~="unread"] .subject-line::before {
+  content: "";
+  flex: none;
+  inline-size: 8px;
+  block-size: 8px;
+  margin-inline-end: 6px;
+  border-radius: 50%;
+  background: var(--gm-unread);
 }
 
 /* --- Избранное: жёлтая полоска 4px, фон #FFF8E1 --- */
 #threadTree tr[data-properties~="flagged"]:not(.selected) {
-  background-color: var(--gm-fav-bg) !important;
+  background-color: var(--gm-fav-bg);
 }
 #threadTree tr[data-properties~="flagged"] {
-  --gm-strip: inset 4px 0 0 var(--gm-fav-bar);
-}
-
-/* --- Письма с метками (тегами): подсветка цветом самой метки.
-   Thunderbird сам задаёт на строке --tag-color (цвет из «Настройки → Метки»),
-   поэтому работает для любых своих меток без правки CSS.
-   Полоска 4px — чистый цвет метки, фон — тот же цвет, разбавленный до 14 %,
-   тема письма — цвет метки, затемнённый до читаемого (AA). --- */
-#threadTree tr[data-properties~="tagged"] {
-  --gm-strip: inset 4px 0 0 var(--tag-color, transparent);
-}
-#threadTree tr[data-properties~="tagged"]:not(.selected) {
-  background-color: color-mix(in srgb, var(--tag-color, transparent) 14%, var(--gm-bg)) !important;
-}
-#threadTree tr[data-properties~="tagged"] :is(.subject-line, .subject) {
-  color: color-mix(in srgb, var(--tag-color, var(--gm-text)) 40%, var(--gm-text)) !important;
-}
-/* метка + избранное: полоска метки снаружи, жёлтая рядом, фон — цвет метки */
-#threadTree tr[data-properties~="tagged"][data-properties~="flagged"] {
-  --gm-strip: inset 4px 0 0 var(--tag-color, transparent), inset 8px 0 0 var(--gm-fav-bar);
-}
-/* значок метки в строке — крупнее и залит цветом метки */
-#threadTree tr[data-properties~="tagged"] .tag-icon:not([hidden]) {
-  fill: var(--tag-color, currentColor) !important;
-  stroke: color-mix(in srgb, var(--tag-color, currentColor) 60%, var(--gm-text)) !important;
+  box-shadow: inset 4px 0 0 var(--gm-fav-bar);
 }
 
 /* --- Важно (тег $label1 → класс T_24label1): красная полоска, фон #FFEDEE --- */
 #threadTree tr[data-properties~="T_24label1"]:not(.selected) {
-  background-color: var(--gm-imp-bg) !important;
+  background-color: var(--gm-imp-bg);
 }
 #threadTree tr[data-properties~="T_24label1"] {
-  --gm-strip: inset 4px 0 0 var(--gm-imp-bar);
+  box-shadow: inset 4px 0 0 var(--gm-imp-bar);
 }
 #threadTree tr[data-properties~="T_24label1"] :is(.subject-line, .subject) {
   color: var(--gm-imp-text) !important; /* 5.8:1 на #FFEDEE */
@@ -448,25 +330,25 @@ button {
 
 /* --- Избранное + важно: красный фон + жёлтая звезда, обе полоски --- */
 #threadTree tr[data-properties~="flagged"][data-properties~="T_24label1"] {
-  --gm-strip: inset 4px 0 0 var(--gm-imp-bar), inset 8px 0 0 var(--gm-fav-bar);
+  box-shadow: inset 4px 0 0 var(--gm-imp-bar), inset 8px 0 0 var(--gm-fav-bar);
 }
 
 /* --- Звезда: жёлтая заливка + тёмный контур (иначе 1.7:1) --- */
 #threadTree .button-star,
 #threadTree .tree-view-row-flag img {
-  -moz-context-properties: fill, stroke !important;
+  -moz-context-properties: fill, stroke;
 }
 #threadTree tr[data-properties~="flagged"] .button-star,
 #threadTree tr[data-properties~="flagged"] .tree-view-row-flag img {
   fill: var(--gm-star) !important;
   stroke: var(--gm-star-outline) !important;
-  stroke-width: 1.2px !important;
+  stroke-width: 1.2px;
 }
 /* не отмеченная звезда — различимый контур ≥ 3:1 */
 #threadTree tr:not([data-properties~="flagged"]) .button-star {
-  fill: transparent !important;
-  stroke: var(--gm-icon) !important;
-  opacity: 0.65 !important;
+  fill: transparent;
+  stroke: var(--gm-icon);
+  opacity: 0.65;
 }
 
 /* --- Выделенное письмо (панель в фокусе) --- */
@@ -474,14 +356,14 @@ button {
   /* без фокуса панели — бледнее, но с контуром по верху/низу */
   background-color: var(--gm-sel-bg-inactive) !important;
   color: var(--gm-text) !important;
-  --gm-edge: inset 0 1px 0 var(--gm-sel-edge-inactive), inset 0 -1px 0 var(--gm-sel-edge-inactive);
+  border-block: 1px solid var(--gm-sel-edge-inactive);
 }
 #threadTree [is="tree-view-table-body"]:is(:focus, :focus-within) > tr.selected,
 #threadTree tr.selected:focus-within {
   background-color: var(--gm-sel-bg) !important; /* #D6F5EA */
-  --gm-edge: inset 0 1px 0 var(--gm-unread), inset 0 -1px 0 var(--gm-unread);
+  border-block-color: var(--gm-unread);
 }
-/* цветные полоски у выделенных сохраняются (--gm-strip не сбрасывается) */
+/* цветные полоски у выделенных сохраняются (box-shadow выше не сбрасывается) */
 #threadTree tr.selected[data-properties~="unread"] :is(.subject-line, .subject, .sender) {
   color: var(--gm-unread) !important; /* 4.6:1 на #D6F5EA */
 }
@@ -495,49 +377,50 @@ button {
 /* --- Свёрнутая ветка с непрочитанными внутри --- */
 #threadTree tr.children.collapsed[data-properties~="hasUnread"],
 #threadTree tr.children.collapsed.hasUnread {
-  font-weight: 700 !important;
+  font-weight: 700;
 }
 #threadTree tr.children.collapsed:is([data-properties~="hasUnread"], .hasUnread) .twisty::after {
-  content: "" !important;
-  display: inline-block !important;
-  inline-size: 10px !important;
-  block-size: 10px !important;
-  margin-inline-start: 3px !important;
-  border-radius: 50% !important;
-  background: var(--gm-accent) !important;
-  box-shadow: 0 0 0 2px var(--gm-bg), 0 0 0 3.5px var(--gm-unread) !important;
+  content: "";
+  display: inline-block;
+  inline-size: 10px;
+  block-size: 10px;
+  margin-inline-start: 3px;
+  border-radius: 50%;
+  background: var(--gm-accent);
+  box-shadow: 0 0 0 2px var(--gm-bg), 0 0 0 3.5px var(--gm-unread);
 }
 
 /* --- Иконки: вложение, ответ, пересылка, спам — читаемые (≥ 3:1) --- */
 #threadTree :is(.state, .attachment-icon, .button-spam img, .tree-view-row-attach img) {
   opacity: 1 !important;
-  color: var(--gm-icon) !important;
-  inline-size: 16px !important;
-  block-size: 16px !important;
+  color: var(--gm-icon);
+  inline-size: 16px;
+  block-size: 16px;
 }
 #threadTree tr[data-properties~="replied"] .state,
 #threadTree tr[data-properties~="forwarded"] .state {
-  color: var(--gm-unread) !important;
+  color: var(--gm-unread);
 }
 #threadTree tr:not([data-properties~="attach"]) .attachment-icon {
   opacity: 0 !important;
 }
 #threadTree tr[data-properties~="junk"] {
-  color: var(--gm-muted) !important;
-  background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px) !important;
+  color: var(--gm-muted);
+  background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px);
 }
 #threadTree tr[data-properties~="junk"] .button-spam img {
-  color: var(--gm-imp-text) !important;
+  color: var(--gm-imp-text);
 }
 
 /* Теги в списке и в письме — цветные чипсы */
+#threadTree .tag-icon,
 #messageHeader .tag,
 #messageHeader .message-header-tag,
 .tag-list .tag {
-  border-radius: 999px !important;
-  padding: 1px 8px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /* Заголовок списка, сортировка */
@@ -546,41 +429,36 @@ button {
   background: #f7faf9 !important;
   color: var(--gm-muted) !important;
   border-bottom: 1px solid var(--gm-divider) !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /* Видимая обводка фокуса в списке — тёмная, на белом ≥ 3:1 */
 #threadTree tr:focus-visible,
 #threadTree [is="tree-view-table-body"]:focus-visible {
-  outline: 2px solid var(--gm-text) !important;
-  outline-offset: -2px !important;
+  outline: 2px solid var(--gm-text);
+  outline-offset: -2px;
 }
 
 /* ==========================================================================
    6. ОБЛАСТЬ ПИСЬМА
    Тело письма (HTML) — это content-документ: userChrome его не затрагивает.
    ========================================================================== */
-#singleMessage,
-#attachmentView {
-  color: var(--gm-text) !important; /* штатно — цвет текста вкладок, 2:1 на белом */
-}
 #messageHeader,
 #messageHeader .message-header-container {
   background-color: var(--gm-bg) !important;
   color: var(--gm-text) !important;
-  border-bottom: 2px solid var(--gm-divider) !important;
-  box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35) !important;
+  border-bottom: 2px solid var(--gm-divider);
+  box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35);
 }
-#messageHeader #expandedsubjectBox,
 #messageHeader .message-header-subject,
 #messageHeader .header-subject {
-  font-size: 18px !important;
-  font-weight: 700 !important;
+  font-size: 18px;
+  font-weight: 700;
 }
 #messageHeader :is(.header-label, .message-header-label, .date) {
-  color: var(--gm-muted) !important;
-  font-size: 13px !important;
+  color: var(--gm-muted);
+  font-size: 13px;
 }
 
 /* ==========================================================================
@@ -592,180 +470,62 @@ button {
 #unifiedToolbarContent [item-id="write-message"] {
   background: var(--gm-accent) !important;
   color: var(--gm-accent-text) !important;
-  font-weight: 700 !important;
-  border-radius: 8px !important;
+  font-weight: 700;
+  border-radius: 8px;
   border: 0 !important;
 }
 #button-newmsg:hover,
 #unifiedToolbarContent [data-item-id="write-message"]:hover,
 #unifiedToolbarContent [item-id="write-message"]:hover {
-  filter: brightness(1.06) saturate(1.05) !important;
+  filter: brightness(1.06) saturate(1.05);
 }
 #button-newmsg:focus-visible,
 #unifiedToolbarContent [data-item-id="write-message"]:focus-visible,
 #unifiedToolbarContent [item-id="write-message"]:focus-visible {
-  outline: 2px solid var(--gm-text) !important;
-  outline-offset: 2px !important;
+  outline: 2px solid var(--gm-text);
+  outline-offset: 2px;
 }
 #button-newmsg :is(.toolbarbutton-icon, .toolbarbutton-text, label),
 #unifiedToolbarContent [data-item-id="write-message"] :is(img, span, label) {
   color: var(--gm-accent-text) !important;
-  fill: currentColor !important;
+  fill: currentColor;
 }
 
-/* Обычные поля ввода: рамка 3:1, фокус — зелёное кольцо.
-   Намеренно без !important: это запасной стиль, он не должен ломать поля внутри
-   составных виджетов (получатели в окне написания, мини-календарь и т.п.).
-   Поля поиска (search-bar) настраиваются переменными в разделе «Современные кнопки». */
+/* Поиск и поля ввода: рамка 3:1, фокус — зелёная + кольцо */
 input:is([type="text"], [type="search"], :not([type])),
-textarea {
-  border: 1px solid var(--gm-border);
+textarea,
+search-bar input,
+#qfb-qs-textbox {
+  border: 1px solid var(--gm-border) !important;
   border-radius: 8px;
-  background-color: #ffffff;
+  background: #ffffff;
   color: var(--gm-text);
 }
 input:focus-visible,
-textarea:focus-visible {
-  border-color: var(--gm-unread);
+textarea:focus-visible,
+search-bar input:focus-visible {
+  border-color: var(--gm-unread) !important;
   outline: 2px solid var(--gm-unread);
   outline-offset: 1px;
 }
 ::placeholder {
-  color: var(--gm-muted) !important;
-  opacity: 1 !important;
+  color: var(--gm-muted);
+  opacity: 1;
 }
 
 /* Панель быстрых фильтров */
 #quickFilterBarContainer,
 #quick-filter-bar {
-  background-color: #f7faf9 !important;
-  color: var(--gm-text) !important; /* штатно — цвет текста вкладок */
+  background: #f7faf9 !important;
   border-bottom: 1px solid var(--gm-divider) !important;
 }
-
-/* ==========================================================================
-   СОВРЕМЕННЫЕ КНОПКИ
-   Плоские, без рамок и серых подложек: значок + подпись, скругление 8px,
-   при наведении — мягкая мятная подложка. Штатные кнопки Thunderbird
-   настраиваются переменными --button-*, поэтому задаём их на контейнерах.
-   ========================================================================== */
-:root {
-  --gm-btn-radius: 8px;
-  --gm-btn-hover: rgba(10, 122, 90, 0.1);
-  --gm-btn-active: rgba(10, 122, 90, 0.2);
-}
-
-/* --- Панель фильтров и заголовок списка писем --- */
-#quick-filter-bar,
-#threadPaneHeaderBar {
-  --button-background-color: transparent !important;
-  --button-border-color: transparent !important;
-  --button-border-radius: var(--gm-btn-radius) !important;
-  --button-text-color: var(--gm-text) !important;
-  --button-hover-text-color: var(--gm-text) !important;
-  --button-hover-background-color: var(--gm-btn-hover) !important;
-  --button-active-background-color: var(--gm-btn-active) !important;
-  --button-pressed-shadow: none !important;
-  --button-pressed-indicator-padding: 0px !important; /* место под штатную «пилюлю»-индикатор */
-  --toolbar-button-hover-background-color: var(--gm-btn-hover) !important;
-  --toolbar-button-hover-border-color: transparent !important;
-  --toolbar-button-hover-checked-color: var(--gm-btn-active) !important;
-}
-:is(#quick-filter-bar, #threadPaneHeaderBar) .button:not(.qfb-tag-button) {
-  border-color: transparent !important;
-  border-radius: var(--gm-btn-radius) !important;
-  box-shadow: none !important;
-}
-/* штатный индикатор-«пилюля» слева от значка — убран, состояние видно по заливке */
-:is(#quick-filter-bar, #threadPaneHeaderBar) .check-button::before {
-  display: none !important;
-}
-/* группа фильтров: без общей рамки и перегородок, кнопки с небольшим зазором */
-#quick-filter-bar .button-group {
-  border-color: transparent !important;
-  gap: 2px !important;
-}
-#quick-filter-bar .button-group .button {
-  border: 0 !important;
-  border-radius: var(--gm-btn-radius) !important;
-}
-/* Включённый фильтр. Только background-color: значки кнопок — это
-   background-image, сокращённое `background` их стирает. */
-:is(#quick-filter-bar, #threadPaneHeaderBar) .check-button[aria-pressed="true"],
+#quickFilterBarContainer toolbarbutton[checked="true"],
+#quickFilterBarContainer button[aria-pressed="true"],
 #quick-filter-bar toolbarbutton[checked="true"] {
-  background-color: var(--gm-sel-bg) !important;
-  color: var(--gm-accent-text) !important; /* 14:1 */
-  font-weight: 600 !important;
-  box-shadow: inset 0 0 0 1px var(--gm-unread) !important;
-}
-:is(#quick-filter-bar, #threadPaneHeaderBar) .check-button[aria-pressed="true"]:hover {
-  background-color: #c2efdf !important;
-}
-:is(#quick-filter-bar, #threadPaneHeaderBar) .button:focus-visible {
-  outline: 2px solid var(--gm-unread) !important;
-  outline-offset: 1px !important;
-}
-
-/* --- Поля поиска (внутри — shadow DOM, настраиваются переменными) --- */
-search-bar {
-  --button-border-radius: 10px !important;
-  --search-bar-color: var(--gm-text) !important;
-  --search-bar-background: #f2f5f4 !important;
-  --search-bar-focus-background: #ffffff !important;
-  --search-bar-border-color: transparent !important;
-  --search-focus-outline-color: var(--gm-unread) !important;
-}
-search-bar:hover {
-  --search-bar-border-color: var(--gm-border) !important;
-}
-
-/* --- Кнопки в шапке письма: «Ответить», «Переслать», «Архивировать»… --- */
-#header-view-toolbar {
-  gap: 2px !important;
-}
-#messageHeader .message-header-view-button,
-#messageHeader .message-header-view-button > .toolbarbutton-menubutton-button,
-#messageHeader .message-header-view-button > .toolbarbutton-menubutton-dropmarker {
-  appearance: none !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 1px solid transparent !important;
-  border-radius: var(--gm-btn-radius) !important;
-  box-shadow: none !important;
-  color: var(--gm-text) !important;
-}
-#messageHeader .message-header-view-button:not([is="toolbarbutton-menu-button"]),
-#messageHeader .message-header-view-button > .toolbarbutton-menubutton-button {
-  padding: 4px 8px !important;
-}
-#messageHeader .message-header-view-button .toolbarbutton-text {
-  font-size: 13px !important;
-  font-weight: 500 !important;
-}
-#messageHeader .message-header-view-button:not([is="toolbarbutton-menu-button"], [disabled="true"]):hover,
-#messageHeader .message-header-view-button:not([disabled="true"]) > :is(.toolbarbutton-menubutton-button, .toolbarbutton-menubutton-dropmarker):hover,
-#messageHeader .message-header-view-button[open] {
-  background-color: var(--gm-btn-hover) !important;
-}
-#messageHeader .message-header-view-button:not([is="toolbarbutton-menu-button"], [disabled="true"]):hover:active,
-#messageHeader .message-header-view-button:not([disabled="true"]) > :is(.toolbarbutton-menubutton-button, .toolbarbutton-menubutton-dropmarker):hover:active,
-#messageHeader .message-header-view-button[checked="true"] {
-  background-color: var(--gm-btn-active) !important;
-}
-#messageHeader .message-header-view-button:focus-visible {
-  outline: 2px solid var(--gm-unread) !important;
-  outline-offset: 1px !important;
-}
-/* главное действие — «Ответить»: мятная заливка, при наведении — акцент */
-#messageHeader :is(#hdrReplyToSenderButton, #hdrReplyButton):not([disabled="true"]) {
-  background-color: var(--gm-sel-bg) !important;
-  color: var(--gm-accent-text) !important; /* 14:1 */
-}
-#messageHeader :is(#hdrReplyToSenderButton, #hdrReplyButton):not([disabled="true"]) .toolbarbutton-text {
-  font-weight: 700 !important;
-}
-#messageHeader :is(#hdrReplyToSenderButton, #hdrReplyButton):not([disabled="true"]):hover {
-  background-color: var(--gm-accent-from) !important; /* текст #062018 — 11:1 */
+  background: var(--gm-sel-bg) !important;
+  color: var(--gm-accent-text) !important;
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 var(--gm-unread);
 }
 
 /* ==========================================================================
@@ -814,69 +574,6 @@ search-bar:hover {
 #cardsPane .selected {
   background: var(--gm-sel-bg) !important;
   box-shadow: inset 4px 0 0 var(--gm-unread);
-}
-
-/* ==========================================================================
-   КАЛЕНДАРЬ: боковая панель
-   Мини-календарь штатно берёт цвет текста тёмной боковой панели, а фон — светлый,
-   поэтому месяц, год и дни недели пропадали. Здесь он целиком белый с тёмным
-   текстом; все пары ≥ 4.5:1.
-   ========================================================================== */
-calendar-minimonth {
-  --mmMainColor: var(--gm-text) !important;
-  --mmMainBackground: #ffffff !important;
-  --mmMainBorderColor: #c9d3cf !important;
-  --mmMainBorderRadius: 10px !important;
-  --mmBoxBackground: #eef2f0 !important; /* плашки «месяц» и «год» */
-  --mmBoxBorderColor: #c9d3cf !important;
-  --mmBoxItemColor: #c9d3cf !important;
-  --mmDayColor: var(--gm-text) !important;
-  --mmDayOtherColor: var(--gm-muted) !important; /* дни соседних месяцев: 5.6:1 */
-  --mmDayWeekColor: var(--gm-unread) !important; /* номера недель */
-  --mmDayTodayColor: var(--gm-accent-text) !important;
-  --mmDayTodayBackground: var(--gm-accent-from) !important; /* сегодня: 11:1 */
-  --mmDayTodayBorderColor: var(--gm-unread) !important;
-  --mmDaySelectedColor: var(--gm-accent-text) !important;
-  --mmDaySelectedBackground: var(--gm-sel-bg) !important;
-  --mmDaySelectedBorderColor: var(--gm-unread) !important;
-  --mmDaySelectedTodayBackground: var(--gm-accent-from) !important;
-  --mmDaySelectedTodayBorderColor: var(--gm-accent-text) !important;
-  --mmDayBusyColor: var(--gm-unread) !important;
-  color: var(--gm-text) !important;
-}
-calendar-minimonth :is(.minimonth-row-header, .minimonth-row-header-week) {
-  color: var(--gm-muted) !important;
-  font-weight: 600 !important;
-}
-calendar-minimonth .minimonth-nav-item input {
-  color: var(--gm-text) !important;
-  background-color: transparent !important;
-  border: 0 !important;
-  outline-offset: -2px;
-}
-calendar-minimonth .minimonth-nav-btn {
-  color: var(--gm-text) !important;
-  stroke: var(--gm-text) !important;
-  fill: var(--gm-text) !important;
-}
-
-/* «Новое событие / задача», когда создавать некуда (календарь выключен) */
-:is(#sidePanelNewEvent, #sidePanelNewTask):disabled {
-  opacity: 1 !important;
-  background-color: #1f2f2a !important;
-  border-color: #3a4d46 !important;
-  color: var(--gm-pane-muted) !important; /* 5.6:1 */
-}
-
-/* список календарей: кнопка «Включить» читается и на акцентной, и на тёмной строке */
-#calendar-list > li > button.calendar-enable-button {
-  background-color: var(--gm-accent-text) !important;
-  color: var(--gm-accent-from) !important; /* 11:1 */
-  border: 1px solid var(--gm-accent-from) !important;
-}
-#calendar-list > li > button.calendar-enable-button:is(:hover, :focus-visible, :active) {
-  background-color: #0d3a2c !important;
-  color: #ffffff !important;
 }
 
 /* ==========================================================================
@@ -942,16 +639,128 @@ notification-message:is([type="critical"], [type="error"]) {
   scrollbar-color: var(--gm-border) transparent;
 }
 
+/* ==========================================================================
+   8. СОВРЕМЕННЫЕ ИКОНКИ (линейные, 24×24, скруглённые)
+   Файлы лежат рядом: chrome/icons/*.svg. userChrome.css — в той же папке
+   chrome/, поэтому относительный путь "icons/..." работает и в zip-пакете
+   со стенда, и при ручной установке.
+   ВАЖНО: селекторы сверены с Thunderbird 128 (Supernova). В 140+ часть
+   имён кнопок unified toolbar может отличаться — после обновления
+   Thunderbird проверить через Browser Toolbox (Инструменты → Инструменты
+   разработчика → Панель инструментов браузера) и поправить data-item-id.
+   Если какая-то иконка не подменилась — значит, селектор не совпал, а не
+   сломался файл: остальные правила продолжают работать.
+   ========================================================================== */
+/* --- Звезда → неоновый огонёк (жёлто-зелёный градиент, тёмный контур) --- */
+#threadTree .button-star,
+#threadTree .tree-view-row-flag img {
+  -moz-context-properties: fill, stroke;
+}
+#threadTree tr[data-properties~="flagged"] .button-star,
+#threadTree tr[data-properties~="flagged"] .tree-view-row-flag img {
+  content: url("icons/flame-on.svg") !important;
+  list-style-image: url("icons/flame-on.svg") !important;
+}
+#threadTree tr:not([data-properties~="flagged"]) .button-star,
+#threadTree tr:not([data-properties~="flagged"]) .tree-view-row-flag img {
+  content: url("icons/flame-off.svg") !important;
+  list-style-image: url("icons/flame-off.svg") !important;
+  -moz-context-properties: stroke;
+  color: var(--gm-icon);
+  opacity: 0.65;
+}
+
+/* --- Значки в списке писем: вложение, ответ, пересылка, спам --- */
+#threadTree .tree-view-row-attach img,
+#threadTree .attachment-icon {
+  content: url("icons/clip.svg") !important;
+  list-style-image: url("icons/clip.svg") !important;
+}
+#threadTree tr[data-properties~="replied"] .state,
+#threadTree tr[data-properties~="forwarded"] .state {
+  -moz-context-properties: fill, stroke;
+}
+#threadTree .button-spam img,
+#threadTree tr[data-properties~="junk"] .button-spam img {
+  content: url("icons/spam.svg") !important;
+  list-style-image: url("icons/spam.svg") !important;
+}
+
+/* --- Кнопки тулбара: классические id + unified toolbar (128+) --- */
+#button-reply .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="reply"] img,
+#unifiedToolbarContent [item-id="reply"] img {
+  list-style-image: url("icons/reply.svg") !important;
+  content: url("icons/reply.svg") !important;
+}
+#button-replyall .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="reply-all"] img,
+#unifiedToolbarContent [item-id="reply-all"] img,
+#unifiedToolbarContent [data-item-id="replyall"] img {
+  list-style-image: url("icons/reply-all.svg") !important;
+  content: url("icons/reply-all.svg") !important;
+}
+#button-forward .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="forward"] img,
+#unifiedToolbarContent [item-id="forward"] img {
+  list-style-image: url("icons/forward.svg") !important;
+  content: url("icons/forward.svg") !important;
+}
+#button-archive .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="archive"] img,
+#unifiedToolbarContent [item-id="archive"] img {
+  list-style-image: url("icons/archive.svg") !important;
+  content: url("icons/archive.svg") !important;
+}
+#button-junk .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="junk"] img,
+#unifiedToolbarContent [item-id="junk"] img,
+#unifiedToolbarContent [data-item-id="spam"] img {
+  list-style-image: url("icons/spam.svg") !important;
+  content: url("icons/spam.svg") !important;
+}
+#button-delete .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="delete"] img,
+#unifiedToolbarContent [item-id="delete"] img {
+  list-style-image: url("icons/trash.svg") !important;
+  content: url("icons/trash.svg") !important;
+}
+#button-getmsg .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="get-mail"] img,
+#unifiedToolbarContent [item-id="get-mail"] img {
+  list-style-image: url("icons/get-mail.svg") !important;
+  content: url("icons/get-mail.svg") !important;
+}
+#button-newmsg .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="write-message"] img {
+  list-style-image: url("icons/compose.svg") !important;
+  content: url("icons/compose.svg") !important;
+}
+/* метка (тег) и пин: unified toolbar + классические кнопки */
+#button-tag .toolbarbutton-icon,
+#unifiedToolbarContent [data-item-id="tag-message"] img,
+#unifiedToolbarContent [item-id="tag-message"] img,
+#unifiedToolbarContent [data-item-id="tag"] img {
+  list-style-image: url("icons/tag.svg") !important;
+  content: url("icons/tag.svg") !important;
+}
+#button-pin .toolbarbutton-icon,
+.button-pin img,
+#unifiedToolbarContent [data-item-id*="pin"] img,
+#unifiedToolbarContent [item-id*="pin"] img {
+  list-style-image: url("icons/pin.svg") !important;
+  content: url("icons/pin.svg") !important;
+}
+/* окно написания: отправить */
+#msgcomposeWindow #button-send .toolbarbutton-icon {
+  list-style-image: url("icons/send.svg") !important;
+  content: url("icons/send.svg") !important;
+}
+
 /* Уважаем «уменьшить анимацию» */
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
     animation: none !important;
   }
-}
-
-/* кнопка «Создать» над папками — в общем стиле: скругление 8px, плотный текст */
-#folderPaneWriteMessage {
-  border-radius: var(--gm-btn-radius) !important;
-  font-weight: 600 !important;
 }

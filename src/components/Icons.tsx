@@ -1,5 +1,9 @@
 const P: Record<string, { d: string; fill?: boolean; extra?: string }> = {
   star: { d: "M12 2.5l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z" },
+  flame: { d: "M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" },
+  tag: { d: "M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z", extra: "M7.5 7.5h.01" },
+  "reply-all": { d: "M7 17L2 12l5-5M14 17l-5-5 5-5M22 18v-2a4 4 0 0 0-4-4H2" },
+  pin: { d: "M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1z" },
   clip: { d: "M21 11l-9 9a6 6 0 01-8.5-8.5l9-9a4 4 0 015.7 5.7l-9 9a2 2 0 01-2.8-2.8l8.3-8.3" },
   reply: { d: "M9 14L4 9l5-5M4 9h10a6 6 0 016 6v3" },
   forward: { d: "M15 14l5-5-5-5M20 9H10a6 6 0 00-6 6v3" },
@@ -45,6 +49,7 @@ export function Icon({
   className?: string;
 }) {
   const p = P[name];
+  const flameGrad = name === "flame";
   return (
     <svg
       width={size}
@@ -59,6 +64,14 @@ export function Icon({
       className={className}
       style={{ flex: "none" }}
     >
+      {flameGrad && (
+        <defs>
+          <linearGradient id="gm-flame-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#FDE047" />
+            <stop offset="100%" stopColor="#2EE6A8" />
+          </linearGradient>
+        </defs>
+      )}
       <path d={p.d} />
     </svg>
   );

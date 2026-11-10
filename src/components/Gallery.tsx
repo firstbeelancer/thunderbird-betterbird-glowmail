@@ -16,9 +16,9 @@ type RowState = { id: string; title: string; note: string; mail: Mail; selected?
 const ROWS: RowState[] = [
   { id: "S01", title: "Прочитанное", note: "Обычный вес, текст #1A1F1D, разделитель #E6EBE9", mail: base({}) },
   { id: "S02", title: "Непрочитанное", note: "Жирный, #0A7A5A (5.3:1), точка-маркер слева", mail: base({ unread: true }) },
-  { id: "S03", title: "Избранное", note: "Жёлтая полоска 4 px, фон #FFF8E1, звезда с тёмным контуром", mail: base({ flagged: true }) },
+  { id: "S03", title: "Избранное", note: "Жёлтая полоска 4 px, фон #FFF8E1, огонёк с тёмным контуром", mail: base({ flagged: true }) },
   { id: "S04", title: "Важно", note: "Красная полоска 4 px, фон #FFEDEE, тема #B4232A", mail: base({ important: true, subject: "Подтвердите платёж до 18:00" }) },
-  { id: "S05", title: "Избранное + важно", note: "Красный фон, жёлтая звезда, обе полоски (красная, затем жёлтая)", mail: base({ flagged: true, important: true, subject: "Договор подряда: правки" }) },
+  { id: "S05", title: "Избранное + важно", note: "Красный фон, жёлто-зелёный огонёк, обе полоски (красная, затем жёлтая)", mail: base({ flagged: true, important: true, subject: "Договор подряда: правки" }) },
   { id: "S06", title: "Выделенное, панель в фокусе", note: "Фон #D6F5EA", mail: base({ unread: true }), selected: true, focused: true },
   { id: "S07", title: "Выделенное, панель без фокуса", note: "Фон бледнее (#E2F3EB) + контур 3:1 сверху и снизу", mail: base({ unread: true }), selected: true, focused: false },
   { id: "S08", title: "Выделенное + избранное", note: "Полоска сохраняется, фон — выделение", mail: base({ flagged: true }), selected: true, focused: true },

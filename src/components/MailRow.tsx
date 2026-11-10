@@ -41,13 +41,16 @@ function Chip({ t }: { t: NonNullable<Mail["tag"]> }) {
   );
 }
 
-export function StarGlyph({ on, size = 16 }: { on?: boolean; size?: number }) {
+export function FlameGlyph({ on, size = 16 }: { on?: boolean; size?: number }) {
   return on ? (
-    <Icon name="star" size={size} fill={C.star} stroke={C.starOutline} sw={1.4} />
+    <Icon name="flame" size={size} fill="url(#gm-flame-grad)" stroke="#062018" sw={1.4} />
   ) : (
-    <Icon name="star" size={size} color={C.icon} sw={1.6} className="opacity-60" />
+    <Icon name="flame" size={size} color={C.icon} sw={1.6} className="opacity-60" />
   );
 }
+
+// Старое имя — на всякий случай, чтобы ничего не сломалось при поиске.
+export const StarGlyph = FlameGlyph;
 
 export function MailRow({
   m,
@@ -89,7 +92,7 @@ export function MailRow({
       {m.replied && <Icon name="reply" size={16} color={C.unread} />}
       {m.forwarded && <Icon name="forward" size={16} color={C.unread} />}
       {m.junk && <Icon name="ban" size={16} color={C.impText} />}
-      <StarGlyph on={m.flagged} />
+      <FlameGlyph on={m.flagged} />
     </span>
   );
 
@@ -119,7 +122,7 @@ export function MailRow({
         className={`${cls} flex items-center gap-3 pr-3 pl-5 text-[14px]`}
         style={{ ...base, color: v.subjectColor }}
       >
-        <StarGlyph on={m.flagged} />
+        <FlameGlyph on={m.flagged} />
         <span className="flex min-w-0 flex-1 items-center">
           {twisty}
           {dot}

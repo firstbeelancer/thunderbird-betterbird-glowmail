@@ -4,6 +4,12 @@ import manifest from "../../theme/manifest.json?raw";
 import install from "../../theme/INSTALL.md?raw";
 import fontLatin from "../../theme/chrome/fonts/Inter-latin.woff2?url";
 import fontCyr from "../../theme/chrome/fonts/Inter-cyrillic.woff2?url";
+// Современные иконки для userChrome: те же SVG, что в theme/chrome/icons/.
+const iconFiles = import.meta.glob("../../theme/chrome/icons/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
 import { makeZip, saveBlob } from "../lib/zip";
 import { Icon } from "./Icons";
 import { ACCENT, C } from "../lib/tokens";
@@ -38,12 +44,17 @@ export function Downloads() {
     {
       key: "pack",
       title: "glowmail-userchrome.zip",
-      desc: "chrome/userChrome.css + шрифт Inter + INSTALL.md",
+      desc: "chrome/userChrome.css + иконки + шрифт Inter + INSTALL.md",
       action: async () => {
         const [a, b] = await Promise.all([bin(fontLatin), bin(fontCyr)]);
+        const icons = Object.entries(iconFiles).map(([p, data]) => ({
+          name: `chrome/icons/${p.split("/").pop()}`,
+          data,
+        }));
         saveBlob(
           makeZip([
             { name: "chrome/userChrome.css", data: css },
+            ...icons,
             { name: "chrome/fonts/Inter-latin.woff2", data: a },
             { name: "chrome/fonts/Inter-cyrillic.woff2", data: b },
             { name: "INSTALL.md", data: install },
