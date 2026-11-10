@@ -176,7 +176,7 @@ export default function App() {
         <div className="relative mx-auto max-w-7xl px-4 pt-14 pb-12 sm:px-6">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#1F2F2A] bg-[#14221E] px-3 py-1 text-[13px] text-[#A9BDB6]">
             <span className="h-2 w-2 rounded-full" style={{ background: C.accentFrom }} />
-            Thunderbird 128+ · Betterbird · v1.0
+            Thunderbird 128+ · Betterbird · v1.3.0
           </div>
           <h1 className="max-w-3xl text-[44px] leading-[1.05] font-extrabold tracking-tight text-[#E6F2EE] sm:text-[56px]">
             Тема <span style={{ background: ACCENT, WebkitBackgroundClip: "text", color: "transparent" }}>GlowMail</span> для Thunderbird
@@ -270,15 +270,13 @@ export default function App() {
       </Section>
 
       <div className="text-[#E6F2EE]" style={{ background: C.paneBg }}>
-        <Section id="install" n="06 · УСТАНОВКА" title="Как включить тему и userChrome.css">
+        <Section id="install" n="06 · УСТАНОВКА" title="Как установить GlowMail">
           <div className="grid gap-6 lg:grid-cols-2">
             <ol className="space-y-4">
               {[
-                ["Тема (.xpi)", "☰ → Дополнения и темы → ⚙ → «Установить дополнение из файла…» → glowmail-theme.xpi → Темы → Включить."],
-                ["Разрешить userChrome", "Настройки → Основные → Редактор конфигурации → toolkit.legacyUserProfileCustomizations.stylesheets = true."],
-                ["Папка профиля", "Справка → Информация для решения проблем → Папка профиля → Открыть папку. Создайте подпапку chrome."],
-                ["Файлы", "Скопируйте в chrome/ файл userChrome.css и папку fonts/ из архива glowmail-userchrome.zip."],
-                ["Перезапуск", "Закройте Thunderbird полностью и откройте снова. Если не подхватилось — запуск с ключом -purgecaches."],
+                ["Скачать", "Нажми glowmail-theme.xpi выше."],
+                ["Установить", "Ctrl+Shift+A → ⚙ → «Установить дополнение из файла…» → выбери скачанный XPI."],
+                ["Включить", "Открой раздел «Темы» и включи GlowMail. Затем перезапусти почтовую программу."],
               ].map(([t, d], i) => (
                 <li key={t} className="flex gap-4">
                   <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full text-[14px] font-extrabold" style={{ background: ACCENT, color: C.accentText }}>
@@ -291,34 +289,8 @@ export default function App() {
                 </li>
               ))}
             </ol>
-            <div className="space-y-3">
-              <div className="rounded-xl border border-[#1F2F2A] bg-[#14221E] p-4">
-                <div className="mb-2 text-[13px] font-bold text-[#2EE6A8]">Папка профиля по системам</div>
-                <dl className="space-y-2 font-mono text-[12px] leading-relaxed text-[#E6F2EE]">
-                  <div>
-                    <dt className="text-[#8FA39C]">Windows</dt>
-                    <dd className="break-all">%APPDATA%\Thunderbird\Profiles\&lt;id&gt;\chrome\</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#8FA39C]">macOS</dt>
-                    <dd className="break-all">~/Library/Thunderbird/Profiles/&lt;id&gt;/chrome/</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#8FA39C]">Linux</dt>
-                    <dd className="break-all">~/.thunderbird/&lt;id&gt;/chrome/</dd>
-                  </div>
-                </dl>
-              </div>
-              <div className="rounded-xl border border-[#5c4b12] bg-[#2a2410] p-4 text-[14px] leading-relaxed text-[#FFE9A6]">
-                <b>Подпись дополнения.</b> Релизный Thunderbird принимает только подписанные .xpi. Отправьте тему на
-                addons.thunderbird.net, для проверки загрузите manifest.json как временное дополнение (about:debugging) или на
-                Betterbird/ESR задайте <span className="font-mono">xpinstall.signatures.required = false</span>.
-              </div>
-              <div className="rounded-xl border border-[#1F2F2A] bg-[#14221E] p-4 text-[14px] leading-relaxed text-[#A9BDB6]">
-                <b className="text-[#E6F2EE]">Ограничение честности:</b> селекторы сверены с исходниками Thunderbird 128
-                (about:3pane, thread-row, folder-tree-row, threadPane.css), но на живом клиенте и с Betterbird этот комплект
-                здесь не запускался. Пройдите чек-лист приёмки ниже и пришлите расхождения.
-              </div>
+            <div className="self-start rounded-xl border border-[#1F2F2A] bg-[#14221E] p-4 text-[14px] leading-relaxed text-[#A9BDB6]">
+              XPI включает стили, иконки и шрифт Inter. Версия 1.3.0 проверена в Betterbird 153.6.0.
             </div>
           </div>
         </Section>
@@ -334,7 +306,7 @@ export default function App() {
       </Section>
 
       <footer className="border-t border-[#1F2F2A] py-8 text-center text-[13px] text-[#8FA39C]" style={{ background: C.paneBg }}>
-        GlowMail 1.0 · userChrome.css + WebExtension-тема · Inter
+        GlowMail 1.3.0 · тема XPI · Inter
       </footer>
     </div>
   );

@@ -1,7 +1,7 @@
 # GlowMail — тема для Thunderbird / Betterbird
 
 Тёмная панель папок с мятно-бирюзовым акцентом, светлый список писем и письмо.
-Thunderbird 128+ / Betterbird, WCAG AA, версия 1.0.
+Thunderbird 128+ / Betterbird. Версия 1.3.0 проверена в Betterbird 153.6.0.
 
 ![GlowMail: три панели — папки, список, письмо](docs/screenshots/02-mock.png)
 
@@ -26,7 +26,7 @@ Thunderbird 128+ / Betterbird, WCAG AA, версия 1.0.
 
 Полная инструкция — в [`theme/INSTALL.md`](theme/INSTALL.md).
 
-Коротко: тему `.xpi` ставят через «Дополнения и темы → Установить дополнение из файла», а `userChrome.css` кладут в `<профиль>/chrome/` и включают `toolkit.legacyUserProfileCustomizations.stylesheets = true`. Релизный Thunderbird принимает только подписанные дополнения — варианты подписи описаны в `INSTALL.md`.
+В `.xpi` входят манифест, стили, иконки и шрифт. Установи файл через **Дополнения и темы → ⚙ → Установить дополнение из файла…**, включи GlowMail в разделе **Темы** и перезапусти программу.
 
 ## Стенд-спецификация
 

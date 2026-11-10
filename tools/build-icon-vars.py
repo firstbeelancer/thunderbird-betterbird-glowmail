@@ -23,7 +23,9 @@ END = "/* GM:ICON-VARS:END */"
 
 # штатная переменная Thunderbird -> файл иконки
 ROOT_MAP = {
-    "star": "flame", "star-sm": "flame",
+    "star": "flame-off", "star-sm": "flame-off",
+    "unread": "mail-unread", "address-book": "contacts",
+    "reply-list": "reply-all",
     "tag": "tag", "tag-sm": "tag",
     "attachment": "clip", "attachment-sm": "clip",
     "reply": "reply", "reply-all": "reply-all", "forward": "forward",
@@ -62,7 +64,10 @@ def decl(mapping) -> str:
 def block() -> str:
     return "\n".join([
         BEGIN,
-        ":root {", decl(ROOT_MAP), "}",
+        ":root {", decl(ROOT_MAP),
+        f"  --gm-flame-on: {data_uri('flame-on')};",
+        f"  --gm-flame-off-light: {data_uri('flame-off-light')};",
+        "}",
         "#folderTree {", decl({k: v for k, v in FOLDER_LIGHT.items()}), "}",
         "#folderTree li.selected {", decl(FOLDER_DARK), "}",
         END,
@@ -77,7 +82,7 @@ def main() -> int:
     else:
         print("маркеры не найдены", file=sys.stderr)
         return 1
-    CSS.write_text(s, encoding="utf-8")
+    CSS.write_text(s, encoding="utf-8", newline="\n")
     print(f"ok: {len(ROOT_MAP)} root vars, {len(FOLDER_LIGHT)} folder vars; css {len(s)} bytes")
     return 0
 

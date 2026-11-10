@@ -53,23 +53,20 @@
   --gm-icon: #4a5652; /* иконки списка: ≥ 7:1 */
   /* состояния писем */
   --gm-unread: #0a7a5a;
-  --gm-fav-bg: #fff8e1;
-  --gm-fav-bar: #f5b700;
-  --gm-star: #f5b700;
-  --gm-star-outline: #7a5600; /* контур звезды: 6.3:1 на #FFF8E1 */
+  --gm-warning-bg: #fff8e1;
+  --gm-star-outline: #7a5600; /* контур предупреждения на #FFF8E1 */
   --gm-imp-bg: #ffedee;
   --gm-imp-bar: #d92d3a;
   --gm-imp-text: #b4232a;
   --gm-sel-bg: #d6f5ea;
-  --gm-sel-bg-inactive: #e2f3eb;
-  --gm-sel-edge-inactive: #3e9a7b;
+  --gm-current-bg: #1c2c2c;
+  --gm-current-text: #e6f2ee;
+  --gm-current-muted: #a9bdb6;
   --gm-font: "GlowMail Inter", Inter, Manrope, system-ui, -apple-system,
     "Segoe UI", Roboto, sans-serif;
 
   /* штатные переменные Thunderbird */
   --thread-pane-unread-color: var(--gm-unread) !important;
-  --thread-pane-flag-fill: var(--gm-star) !important;
-  --thread-pane-flag-stroke: var(--gm-star-outline) !important;
   --folderpane-unread-count-background: var(--gm-accent-from) !important;
   --folderpane-unread-new-count-background: var(--gm-accent-from) !important;
   --folderpane-unread-count-color: var(--gm-accent-text) !important;
@@ -275,17 +272,22 @@ button {
 }
 
 #threadTree tr:is(.table-layout, .card-layout) {
-  background-color: var(--gm-bg);
+  --gm-row-bg: var(--gm-bg);
+  --gm-row-edge: transparent;
   color: var(--gm-text);
   border-bottom: 1px solid var(--gm-divider);
-  box-shadow: none;
+}
+#threadTree :is(tr.table-layout, tr.card-layout .card-container) {
+  background-color: var(--gm-row-bg) !important;
+  background-image: var(--gm-row-glow, none);
+  box-shadow: inset 4px 0 var(--gm-row-edge);
 }
 #threadTree tr:is(.table-layout, .card-layout) :is(.sender, .date, .correspondent, .datecol-column, .sizecol-column) {
   color: var(--gm-muted);
   font-size: 13px;
 }
 #threadTree tr:is(.table-layout, .card-layout):hover:not(.selected) {
-  background-color: #f2f5f4;
+  --gm-row-bg: #f2f5f4;
 }
 
 /* --- Непрочитанные: жирные, #0A7A5A, точка слева --- */
@@ -309,69 +311,56 @@ button {
   background: var(--gm-unread);
 }
 
-/* --- Избранное: жёлтая полоска 4px, фон #FFF8E1 --- */
-#threadTree tr[data-properties~="flagged"]:not(.selected) {
-  background-color: var(--gm-fav-bg);
-}
+/* Избранное подсвечено у огонька, метка окрашивает фон и левую кромку. */
 #threadTree tr[data-properties~="flagged"] {
-  box-shadow: inset 4px 0 0 var(--gm-fav-bar);
+  --gm-row-edge: var(--gm-accent-from);
+}
+#threadTree tr[data-properties~="flagged"]:not(.selected) {
+  --gm-row-bg: #f2f5f4;
+  --gm-row-glow: linear-gradient(
+    to right,
+    transparent 84%,
+    color-mix(in srgb, var(--gm-accent-from) 38%, transparent) 95%,
+    color-mix(in srgb, var(--gm-accent-to) 42%, transparent)
+  );
+}
+#threadTree tr.table-layout[data-properties~="flagged"]:not(.selected) {
+  --gm-row-glow: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--gm-accent-from) 32%, transparent),
+    transparent 90px
+  );
+}
+#threadTree tr[data-properties~="tagged"] {
+  --gm-row-tag: var(--tag-color, var(--gm-unread));
+  --gm-row-edge: var(--gm-row-tag);
+}
+#threadTree tr[data-properties~="tagged"]:not(.selected) {
+  --gm-row-bg: color-mix(in srgb, var(--gm-row-tag) 14%, var(--gm-bg));
 }
 
-/* --- Важно (тег $label1 → класс T_24label1): красная полоска, фон #FFEDEE --- */
-#threadTree tr[data-properties~="T_24label1"]:not(.selected) {
-  background-color: var(--gm-imp-bg);
-}
-#threadTree tr[data-properties~="T_24label1"] {
-  box-shadow: inset 4px 0 0 var(--gm-imp-bar);
-}
-#threadTree tr[data-properties~="T_24label1"] :is(.subject-line, .subject) {
-  color: var(--gm-imp-text) !important; /* 5.8:1 на #FFEDEE */
-}
-
-/* --- Избранное + важно: красный фон + жёлтая звезда, обе полоски --- */
-#threadTree tr[data-properties~="flagged"][data-properties~="T_24label1"] {
-  box-shadow: inset 4px 0 0 var(--gm-imp-bar), inset 8px 0 0 var(--gm-fav-bar);
-}
-
-/* --- Звезда: жёлтая заливка + тёмный контур (иначе 1.7:1) --- */
-#threadTree .button-star,
-#threadTree .tree-view-row-flag img {
-  -moz-context-properties: fill, stroke;
-}
-#threadTree tr[data-properties~="flagged"] .button-star,
-#threadTree tr[data-properties~="flagged"] .tree-view-row-flag img {
-  fill: var(--gm-star) !important;
-  stroke: var(--gm-star-outline) !important;
-  stroke-width: 1.2px;
-}
-/* не отмеченная звезда — различимый контур ≥ 3:1 */
-#threadTree tr:not([data-properties~="flagged"]) .button-star {
-  fill: transparent;
-  stroke: var(--gm-icon);
-  opacity: 0.65;
-}
-
-/* --- Выделенное письмо (панель в фокусе) --- */
+/* Текущее письмо выделено и когда фокус переходит в область чтения. */
 #threadTree tr:is(.table-layout, .card-layout).selected {
-  /* без фокуса панели — бледнее, но с контуром по верху/низу */
-  background-color: var(--gm-sel-bg-inactive) !important;
-  color: var(--gm-text) !important;
-  border-block: 1px solid var(--gm-sel-edge-inactive);
+  --gm-row-bg: var(--gm-current-bg);
+  color: var(--gm-current-text) !important;
+  border-block: 1px solid var(--gm-sel-edge, var(--gm-current-muted));
+  --tree-view-color: var(--gm-current-text);
+  --listbox-selected-color: var(--gm-current-text);
 }
-#threadTree [is="tree-view-table-body"]:is(:focus, :focus-within) > tr.selected,
-#threadTree tr.selected:focus-within {
-  background-color: var(--gm-sel-bg) !important; /* #D6F5EA */
-  border-block-color: var(--gm-unread);
+#threadTree:focus-within tr.selected {
+  --gm-sel-edge: var(--gm-accent-from);
 }
-/* цветные полоски у выделенных сохраняются (box-shadow выше не сбрасывается) */
-#threadTree tr.selected[data-properties~="unread"] :is(.subject-line, .subject, .sender) {
-  color: var(--gm-unread) !important; /* 4.6:1 на #D6F5EA */
+#threadTree tr.selected :is(.subject, .subject-line, .sender, .correspondent) {
+  color: var(--gm-current-text) !important;
 }
-#threadTree tr.selected[data-properties~="T_24label1"] :is(.subject-line, .subject) {
-  color: var(--gm-imp-text) !important; /* 5.6:1 */
+#threadTree tr.selected :is(.date, .datecol-column, .sizecol-column) {
+  color: var(--gm-current-muted) !important;
 }
-#threadTree tr.selected :is(.sender, .date, .correspondent, .datecol-column) {
-  color: #3f4a46 !important; /* ≥ 7:1 на выделении */
+#threadTree tr.selected .subject-line::before {
+  background: var(--gm-accent-from);
+}
+#threadTree tr.selected :is(.attachment-icon, .tree-view-row-attach img) {
+  filter: brightness(0) invert(0.9);
 }
 
 /* --- Свёрнутая ветка с непрочитанными внутри --- */
@@ -404,9 +393,9 @@ button {
 #threadTree tr:not([data-properties~="attach"]) .attachment-icon {
   opacity: 0 !important;
 }
-#threadTree tr[data-properties~="junk"] {
+#threadTree tr[data-properties~="junk"]:not(.selected) {
   color: var(--gm-muted);
-  background-image: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px);
+  --gm-row-glow: repeating-linear-gradient(135deg, transparent 0 8px, rgba(180, 35, 42, 0.05) 8px 16px);
 }
 #threadTree tr[data-properties~="junk"] .button-spam img {
   color: var(--gm-imp-text);
@@ -424,32 +413,76 @@ button {
 }
 
 /* Заголовок списка, сортировка */
-#threadTree .tree-view-header,
-#threadTree [is="tree-view-table-header"] {
-  background: #f7faf9 !important;
-  color: var(--gm-muted) !important;
-  border-bottom: 1px solid var(--gm-divider) !important;
-  font-size: 12px;
-  font-weight: 600;
+#threadTree thead[is="tree-view-table-header"] {
+  background: var(--gm-current-bg) !important;
+  color: var(--gm-current-text) !important;
+}
+#threadTree thead[is="tree-view-table-header"] :is(th, button) {
+  color: inherit !important;
+}
+#threadTree thead[is="tree-view-table-header"] img {
+  filter: brightness(0) invert(0.9);
+  opacity: 1;
 }
 
 /* Видимая обводка фокуса в списке — тёмная, на белом ≥ 3:1 */
 #threadTree tr:focus-visible,
 #threadTree [is="tree-view-table-body"]:focus-visible {
-  outline: 2px solid var(--gm-text);
+  outline: 2px solid var(--gm-unread);
   outline-offset: -2px;
 }
 
 /* ==========================================================================
    6. ОБЛАСТЬ ПИСЬМА
-   Тело письма (HTML) — это content-документ: userChrome его не затрагивает.
+   Панель вокруг тела письма и отдельное окно стартовой страницы.
    ========================================================================== */
-#messageHeader,
-#messageHeader .message-header-container {
+#messagePane,
+#messagepaneboxwrapper,
+#messagepanebox,
+#webBrowser {
   background-color: var(--gm-bg) !important;
+}
+#webBrowser {
+  color-scheme: only light;
+}
+
+#messageHeader {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--gm-accent-to) 13%, var(--gm-bg)),
+    color-mix(in srgb, var(--gm-accent-from) 22%, var(--gm-bg))
+  ) !important;
+  color-scheme: light;
   color: var(--gm-text) !important;
-  border-bottom: 2px solid var(--gm-divider);
+  border-bottom: 1px solid color-mix(in srgb, var(--gm-unread) 25%, var(--gm-divider));
   box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35);
+}
+#messageHeader #headerSenderToolbarContainer {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+#headerSenderToolbarContainer > #header-view-toolbox {
+  background-color: var(--gm-bg);
+  border-radius: 6px;
+}
+#messageHeader .message-header-view-button[tooltiptext]:not([is="toolbarbutton-menu-button"]),
+#messageHeader .message-header-view-button[tooltiptext] > .toolbarbutton-menubutton-button {
+  min-inline-size: 30px;
+  min-block-size: 28px;
+}
+
+/* XUL-метка остаётся доступной, tooltiptext берётся из локализации приложения. */
+#messageHeader .message-header-view-button[tooltiptext] .toolbarbutton-text {
+  display: none !important;
+}
+#messageHeader .message-header-view-button[tooltiptext] .toolbarbutton-icon {
+  display: revert !important;
+  margin-inline: 0;
+}
+#messageHeader .message-header-view-button[tooltiptext]:focus-visible {
+  outline: 2px solid var(--gm-unread);
+  outline-offset: 1px;
 }
 #messageHeader .message-header-subject,
 #messageHeader .header-subject {
@@ -520,8 +553,7 @@ search-bar input:focus-visible {
   border-bottom: 1px solid var(--gm-divider) !important;
 }
 #quickFilterBarContainer toolbarbutton[checked="true"],
-#quickFilterBarContainer button[aria-pressed="true"],
-#quick-filter-bar toolbarbutton[checked="true"] {
+#quick-filter-bar button[aria-pressed="true"] {
   background: var(--gm-sel-bg) !important;
   color: var(--gm-accent-text) !important;
   font-weight: 700;
@@ -626,7 +658,7 @@ notification-message,
   border-radius: 8px;
 }
 notification-message[type="warning"] {
-  background: var(--gm-fav-bg) !important;
+  background: var(--gm-warning-bg) !important;
   border-color: var(--gm-star-outline) !important;
 }
 notification-message:is([type="critical"], [type="error"]) {
@@ -663,8 +695,11 @@ notification-message:is([type="critical"], [type="error"]) {
    context-fill/context-stroke. */
 /* GM:ICON-VARS:BEGIN (генерируется tools/build-icon-vars.py — руками не править) */
 :root {
-  --icon-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E") !important;
-  --icon-star-sm: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E") !important;
+  --icon-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E") !important;
+  --icon-star-sm: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E") !important;
+  --icon-unread: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6M3 7l9 6 3-2'/%3E%3Ccircle cx='20' cy='5' r='2' fill='%232EE6A8'/%3E%3C/svg%3E") !important;
+  --icon-address-book: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='3' width='15' height='18' rx='2'/%3E%3Cpath d='M3 7h3m-3 5h3m-3 5h3m3.5 0a3.5 3.5 0 0 1 7 0'/%3E%3Ccircle cx='13' cy='9' r='2'/%3E%3C/svg%3E") !important;
+  --icon-reply-list: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17L2 12l5-5M14 17l-5-5 5-5M22 18v-2a4 4 0 0 0-4-4H2'/%3E%3C/svg%3E") !important;
   --icon-tag: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/%3E%3Ccircle cx='7.5' cy='7.5' r='1' fill='%233B4642' stroke='none'/%3E%3C/svg%3E") !important;
   --icon-tag-sm: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z'/%3E%3Ccircle cx='7.5' cy='7.5' r='1' fill='%233B4642' stroke='none'/%3E%3C/svg%3E") !important;
   --icon-attachment: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 11l-9 9a6 6 0 01-8.5-8.5l9-9a4 4 0 015.7 5.7l-9 9a2 2 0 01-2.8-2.8l8.3-8.3'/%3E%3C/svg%3E") !important;
@@ -683,6 +718,8 @@ notification-message:is([type="critical"], [type="error"]) {
   --icon-search: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4a7 7 0 100 14 7 7 0 000-14zM21 21l-4.3-4.3'/%3E%3C/svg%3E") !important;
   --icon-inbox: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13L22 12v6a2 2 0 01-2 2H4a2 2 0 01-2-2v-6z'/%3E%3C/svg%3E") !important;
   --icon-folder: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z'/%3E%3C/svg%3E") !important;
+  --gm-flame-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='url(%23gm-flame)' stroke='%23062018' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cdefs%3E%3ClinearGradient id='gm-flame' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='20%25' stop-color='%23FDE047'/%3E%3Cstop offset='58%25' stop-color='%232EE6A8'/%3E%3Cstop offset='92%25' stop-color='%2322D3EE'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E");
+  --gm-flame-off-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A9BDB6' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z'/%3E%3C/svg%3E");
 }
 #folderTree {
   --icon-folder: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23E6F2EE' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z'/%3E%3C/svg%3E") !important;
@@ -699,32 +736,28 @@ notification-message:is([type="critical"], [type="error"]) {
   --icon-archive: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233B4642' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 8v13H3V8M1 3h22v5H1zM10 12h4'/%3E%3C/svg%3E") !important;
 }
 /* GM:ICON-VARS:END */
-/* Звезда «избранное» в заголовке письма: включённое состояние — цветной огонёк */
-button.email-action-flagged.flagged img {
-  content: url("icons/flame-on.svg") !important;
+/* В карточке огонёк — фон настоящей кнопки, в таблице и шапке — img. */
+#threadTree tr[data-properties~="flagged"],
+#starMessageButton[aria-checked="true"] {
+  --icon-star: var(--gm-flame-on);
 }
-
-/* --- 8б. Звезда → неоновый огонёк в списке писем (градиент, тёмный контур) --- */
-#threadTree .button-star,
+#threadTree tr.selected:not([data-properties~="flagged"]) {
+  --icon-star: var(--gm-flame-off-light);
+}
+#starMessageButton img,
 #threadTree .tree-view-row-flag img {
-  -moz-context-properties: fill, stroke;
+  content: var(--icon-star) !important;
+  inline-size: 16px;
+  block-size: 16px;
 }
-#threadTree tr[data-properties~="flagged"] .button-star,
-#threadTree tr[data-properties~="flagged"] .tree-view-row-flag img {
-  content: url("icons/flame-on.svg") !important;
-  list-style-image: url("icons/flame-on.svg") !important;
+#threadTree .button-star {
+  background-image: var(--icon-star) !important;
+  background-size: 18px;
 }
-#threadTree tr:not([data-properties~="flagged"]) .button-star,
-#threadTree tr:not([data-properties~="flagged"]) .tree-view-row-flag img {
-  content: url("icons/flame-off.svg") !important;
-  list-style-image: url("icons/flame-off.svg") !important;
-  -moz-context-properties: stroke;
-  color: var(--gm-icon);
-  opacity: 0.4;
-}
-#threadTree tr:not([data-properties~="flagged"]) :is(.tree-view-row-flag button:hover, .button-star:hover) img {
+#threadTree tr[data-properties~="flagged"] :is(.button-star, .tree-view-row-flag button) {
   opacity: 1;
 }
+
 /* значок «спам» в колонке: приглушён, как у штатной темы; у спама и при наведении — ярче */
 #threadTree tr:not([data-properties~="junk"]) .tree-view-row-spam img {
   opacity: 0.35;
@@ -736,8 +769,7 @@ button.email-action-flagged.flagged img {
 /* --- Значки в списке писем: вложение, ответ, пересылка, спам --- */
 #threadTree .tree-view-row-attach img,
 #threadTree .attachment-icon {
-  content: url("icons/clip.svg") !important;
-  list-style-image: url("icons/clip.svg") !important;
+  content: var(--icon-attachment) !important;
 }
 #threadTree tr[data-properties~="replied"] .state,
 #threadTree tr[data-properties~="forwarded"] .state {

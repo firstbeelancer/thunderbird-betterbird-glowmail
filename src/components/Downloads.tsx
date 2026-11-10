@@ -4,15 +4,20 @@ import manifest from "../../theme/manifest.json?raw";
 import install from "../../theme/INSTALL.md?raw";
 import fontLatin from "../../theme/chrome/fonts/Inter-latin.woff2?url";
 import fontCyr from "../../theme/chrome/fonts/Inter-cyrillic.woff2?url";
+import { makeZip, saveBlob } from "../lib/zip";
+import { Icon } from "./Icons";
+import { ACCENT, C } from "../lib/tokens";
+
 // Современные иконки для userChrome: те же SVG, что в theme/chrome/icons/.
 const iconFiles = import.meta.glob("../../theme/chrome/icons/*.svg", {
   query: "?raw",
   import: "default",
   eager: true,
 }) as Record<string, string>;
-import { makeZip, saveBlob } from "../lib/zip";
-import { Icon } from "./Icons";
-import { ACCENT, C } from "../lib/tokens";
+const icons = Object.entries(iconFiles).map(([path, data]) => ({
+  name: `chrome/icons/${path.split("/").pop()}`,
+  data,
+}));
 
 const bin = async (u: string) => new Uint8Array(await (await fetch(u)).arrayBuffer());
 
@@ -32,8 +37,20 @@ export function Downloads() {
     {
       key: "xpi",
       title: "glowmail-theme.xpi",
-      desc: "WebExtension-тема: рамка, вкладки, панели, меню",
-      action: () => saveBlob(makeZip([{ name: "manifest.json", data: manifest }]), "glowmail-theme.xpi"),
+      desc: "Тема GlowMail со стилями, иконками и шрифтом",
+      action: async () => {
+        const [latin, cyrillic] = await Promise.all([bin(fontLatin), bin(fontCyr)]);
+        saveBlob(
+          makeZip([
+            { name: "manifest.json", data: manifest },
+            { name: "chrome/userChrome.css", data: css },
+            { name: "chrome/fonts/Inter-latin.woff2", data: latin },
+            { name: "chrome/fonts/Inter-cyrillic.woff2", data: cyrillic },
+            ...icons,
+          ]),
+          "glowmail-theme.xpi",
+        );
+      },
     },
     {
       key: "css",
@@ -47,10 +64,6 @@ export function Downloads() {
       desc: "chrome/userChrome.css + иконки + шрифт Inter + INSTALL.md",
       action: async () => {
         const [a, b] = await Promise.all([bin(fontLatin), bin(fontCyr)]);
-        const icons = Object.entries(iconFiles).map(([p, data]) => ({
-          name: `chrome/icons/${p.split("/").pop()}`,
-          data,
-        }));
         saveBlob(
           makeZip([
             { name: "chrome/userChrome.css", data: css },
