@@ -26,6 +26,7 @@
 
 - Источник правды — `theme/`: `manifest.json`, `chrome/userChrome.css`, `chrome/fonts/`.
 - `src/` — стенд-спецификация (Vite + React), `public/download/` — копии для скачивания со стенда.
+- `docs/index.html` — готовая сборка стенда одним файлом (копия `dist/index.html`), `docs/screenshots/` и `docs/overview.md` — описание темы на случай, если страница на Arena исчезнет. После правок стенда пересобрать и обновить копию.
 - Палитра и токены — в `src/lib/tokens.ts` и в `:root` в `userChrome.css`. Палитру без согласования с Мариной не менять, контраст держать по WCAG AA.
 - Шрифт — Inter (variable, латиница + кириллица), SIL OFL, лежит в `theme/chrome/fonts/`.
 - Лицензия репозитория пока не выбрана — не назначать её самостоятельно.

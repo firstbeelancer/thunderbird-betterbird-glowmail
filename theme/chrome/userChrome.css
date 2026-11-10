@@ -8,8 +8,8 @@
    (см. INSTALL.md).
 
    Контраст (WCAG 2.2 AA): текст ≥ 4.5:1, иконки/рамки ≥ 3:1.
-   Селекторы проверены по исходникам Thunderbird 128 (about3Pane, thread-row,
-   folder-tree-row, threadPane.css). Если что-то не подхватилось после обновления —
+   Селекторы сверены с исходниками Betterbird 140 / Thunderbird 128+ (about3Pane,
+   thread-card, thread-row, folder-tree-row, list-container.css, threadCard.css). Если что-то не подхватилось после обновления —
    откройте Browser Toolbox (Ctrl+Shift+Alt+I) и сверьте классы.
    ========================================================================== */
 
@@ -142,10 +142,18 @@ button {
 }
 
 /* активная папка: акцентная плашка + жирный текст */
-#folderTree li.selected > .container {
+/* Плашка не зависит от фокуса панели: без этого правила штатный стиль при
+   светлой схеме красит выбранную папку светло-серым, а текст остаётся светлым. */
+#folderTree li.selected > .container,
+#folderTree:focus-within li.selected > .container,
+#folderTree li.selected.current > .container {
   background: var(--gm-accent) !important;
+  border-color: transparent !important;
   color: var(--gm-accent-text) !important;
+  fill: var(--gm-accent-text);
   font-weight: 700;
+  --indicator-background: var(--gm-accent-from);
+  --indicator-border: var(--gm-accent-from);
 }
 #folderTree li.selected > .container .name,
 #folderTree li.selected > .container .total-count,
@@ -172,13 +180,18 @@ button {
 /* счётчик непрочитанных — яркий бейдж */
 #folderTree .unread-count {
   background: var(--gm-accent) !important;
-  color: var(--gm-accent-text) !important;
+  border-color: transparent !important; /* штатный «контурный» вариант у свёрнутых веток */
+  color: var(--gm-accent-text) !important; /* 11:1 на акценте */
   font-weight: 700;
   font-size: 12px;
   min-width: 20px;
   padding: 1px 7px;
   border-radius: 999px;
   text-align: center;
+}
+/* общее число писем — спокойный текст без плашки */
+#folderTree .total-count {
+  background: transparent !important;
 }
 /* на акцентной плашке бейдж инвертируется */
 #folderTree li.selected > .container > .unread-count {
@@ -190,17 +203,16 @@ button {
    1) если пользователь задал цвет папки штатно (Folder → Properties → Color),
       полоска берёт его из --icon-color иконки;
    2) иначе — цвет по типу папки. */
-#folderTree li > .container > .icon::before {
+#folderTree li:not([data-is-busy], [data-has-error]) > .container > .icon::before {
   content: "";
-  position: absolute;
-  inset-block: 7px;
-  inset-inline-start: -8px;
-  width: 4px;
+  position: absolute; /* относительно .icon (16×16, position: relative) */
+  inset-block: -4px;
+  inset-inline-start: -6px;
+  width: 3px;
   border-radius: 2px;
   background: var(--gm-folder-color, transparent);
 }
-#folderTree li > .container > .icon[style*="--icon-color: #"]::before,
-#folderTree li > .container > .icon[style*="--icon-color: rgb"]::before {
+#folderTree li:not([data-is-busy], [data-has-error]) > .container > .icon[style*="--icon-color"]::before {
   background: var(--icon-color);
 }
 #folderTree li[data-folder-type="inbox"] { --gm-folder-color: #2ee6a8; }
@@ -215,7 +227,7 @@ button {
    #folderTree li[aria-label^="Работа"] { --gm-folder-color: #22d3ee; } */
 
 /* на акцентной плашке полоска тёмная, чтобы не сливалась с градиентом */
-#folderTree li.selected > .container > .icon::before {
+#folderTree li.selected:not([data-is-busy], [data-has-error]) > .container > .icon::before {
   background: var(--gm-accent-text) !important;
 }
 
@@ -267,6 +279,11 @@ button {
    Выбор: карточки (card-layout) + «обычная» плотность.
    Табличный вид (table-layout) поддержан теми же правилами.
    ========================================================================== */
+#threadTree {
+  --tree-pane-background: var(--gm-bg);
+  --tree-card-background: transparent;
+  --unread-color: var(--gm-unread);
+}
 #threadTree,
 #threadTree [is="tree-view-table-body"] {
   background-color: var(--gm-bg) !important;
@@ -279,10 +296,39 @@ button {
   color: var(--gm-text);
   border-bottom: 1px solid var(--gm-divider);
   box-shadow: none;
+  /* полоска слева и контур выделения рисуются на ячейках (см. ниже) */
+  --gm-strip: 0 0 transparent;
+  --gm-edge: 0 0 transparent;
+}
+#threadTree tr:is(.table-layout, .card-layout) > td {
+  box-shadow: var(--gm-edge);
+}
+#threadTree tr:is(.table-layout, .card-layout) > td:first-child {
+  box-shadow: var(--gm-strip), var(--gm-edge);
+}
+
+/* --- Карточки: плоские строки во всю ширину вместо «коробочек» с рамкой.
+   Цвет состояния красит всю строку (tr), сама карточка прозрачная. --- */
+#threadTree .card-layout > td {
+  border-bottom: 1px solid var(--gm-divider);
+}
+#threadTree .card-layout > td > .card-container {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#threadTree .card-layout > td > .card-container::before {
+  display: none; /* штатный индикатор выделения: его заменяют полоски и контур */
 }
 #threadTree tr:is(.table-layout, .card-layout) :is(.sender, .date, .correspondent, .datecol-column, .sizecol-column) {
   color: var(--gm-muted);
   font-size: 13px;
+}
+/* в карточке отправитель — первая строка, основной цвет текста */
+#threadTree tr.card-layout .card-container .sender {
+  color: var(--gm-text);
+  font-size: 14px;
 }
 #threadTree tr:is(.table-layout, .card-layout):hover:not(.selected) {
   background-color: #f2f5f4;
@@ -299,7 +345,16 @@ button {
   font-weight: 700;
   color: var(--gm-unread);
 }
-#threadTree tr[data-properties~="unread"] .subject-line::before {
+#threadTree .card-layout[data-properties~="unread"] {
+  --read-status-fill: var(--gm-unread);
+  --read-status-stroke: var(--gm-unread);
+}
+/* в т.ч. для «новых», штатно синих; у писем с меткой тема остаётся в цвете метки */
+#threadTree tr.card-layout[data-properties~="unread"] .card-container .sender,
+#threadTree tr.card-layout[data-properties~="unread"]:not([data-properties~="tagged"]) .card-container .subject {
+  color: var(--gm-unread) !important;
+}
+#threadTree .table-layout[data-properties~="unread"] .subject-line::before {
   content: "";
   flex: none;
   inline-size: 8px;
@@ -314,7 +369,31 @@ button {
   background-color: var(--gm-fav-bg);
 }
 #threadTree tr[data-properties~="flagged"] {
-  box-shadow: inset 4px 0 0 var(--gm-fav-bar);
+  --gm-strip: inset 4px 0 0 var(--gm-fav-bar);
+}
+
+/* --- Письма с метками (тегами): подсветка цветом самой метки.
+   Thunderbird сам задаёт на строке --tag-color (цвет из «Настройки → Метки»),
+   поэтому работает для любых своих меток без правки CSS.
+   Полоска 4px — чистый цвет метки, фон — тот же цвет, разбавленный до 14 %,
+   тема письма — цвет метки, затемнённый до читаемого (AA). --- */
+#threadTree tr[data-properties~="tagged"] {
+  --gm-strip: inset 4px 0 0 var(--tag-color, transparent);
+}
+#threadTree tr[data-properties~="tagged"]:not(.selected) {
+  background-color: color-mix(in srgb, var(--tag-color, transparent) 14%, var(--gm-bg));
+}
+#threadTree tr[data-properties~="tagged"] :is(.subject-line, .subject) {
+  color: color-mix(in srgb, var(--tag-color, var(--gm-text)) 40%, var(--gm-text)) !important;
+}
+/* метка + избранное: полоска метки снаружи, жёлтая рядом, фон — цвет метки */
+#threadTree tr[data-properties~="tagged"][data-properties~="flagged"] {
+  --gm-strip: inset 4px 0 0 var(--tag-color, transparent), inset 8px 0 0 var(--gm-fav-bar);
+}
+/* значок метки в строке — крупнее и залит цветом метки */
+#threadTree tr[data-properties~="tagged"] .tag-icon:not([hidden]) {
+  fill: var(--tag-color, currentColor) !important;
+  stroke: color-mix(in srgb, var(--tag-color, currentColor) 60%, var(--gm-text)) !important;
 }
 
 /* --- Важно (тег $label1 → класс T_24label1): красная полоска, фон #FFEDEE --- */
@@ -322,7 +401,7 @@ button {
   background-color: var(--gm-imp-bg);
 }
 #threadTree tr[data-properties~="T_24label1"] {
-  box-shadow: inset 4px 0 0 var(--gm-imp-bar);
+  --gm-strip: inset 4px 0 0 var(--gm-imp-bar);
 }
 #threadTree tr[data-properties~="T_24label1"] :is(.subject-line, .subject) {
   color: var(--gm-imp-text) !important; /* 5.8:1 на #FFEDEE */
@@ -330,7 +409,7 @@ button {
 
 /* --- Избранное + важно: красный фон + жёлтая звезда, обе полоски --- */
 #threadTree tr[data-properties~="flagged"][data-properties~="T_24label1"] {
-  box-shadow: inset 4px 0 0 var(--gm-imp-bar), inset 8px 0 0 var(--gm-fav-bar);
+  --gm-strip: inset 4px 0 0 var(--gm-imp-bar), inset 8px 0 0 var(--gm-fav-bar);
 }
 
 /* --- Звезда: жёлтая заливка + тёмный контур (иначе 1.7:1) --- */
@@ -356,14 +435,14 @@ button {
   /* без фокуса панели — бледнее, но с контуром по верху/низу */
   background-color: var(--gm-sel-bg-inactive) !important;
   color: var(--gm-text) !important;
-  border-block: 1px solid var(--gm-sel-edge-inactive);
+  --gm-edge: inset 0 1px 0 var(--gm-sel-edge-inactive), inset 0 -1px 0 var(--gm-sel-edge-inactive);
 }
 #threadTree [is="tree-view-table-body"]:is(:focus, :focus-within) > tr.selected,
 #threadTree tr.selected:focus-within {
   background-color: var(--gm-sel-bg) !important; /* #D6F5EA */
-  border-block-color: var(--gm-unread);
+  --gm-edge: inset 0 1px 0 var(--gm-unread), inset 0 -1px 0 var(--gm-unread);
 }
-/* цветные полоски у выделенных сохраняются (box-shadow выше не сбрасывается) */
+/* цветные полоски у выделенных сохраняются (--gm-strip не сбрасывается) */
 #threadTree tr.selected[data-properties~="unread"] :is(.subject-line, .subject, .sender) {
   color: var(--gm-unread) !important; /* 4.6:1 на #D6F5EA */
 }
@@ -413,7 +492,6 @@ button {
 }
 
 /* Теги в списке и в письме — цветные чипсы */
-#threadTree .tag-icon,
 #messageHeader .tag,
 #messageHeader .message-header-tag,
 .tag-list .tag {
@@ -444,6 +522,10 @@ button {
    6. ОБЛАСТЬ ПИСЬМА
    Тело письма (HTML) — это content-документ: userChrome его не затрагивает.
    ========================================================================== */
+#singleMessage,
+#attachmentView {
+  color: var(--gm-text) !important; /* штатно — цвет текста вкладок, 2:1 на белом */
+}
 #messageHeader,
 #messageHeader .message-header-container {
   background-color: var(--gm-bg) !important;
@@ -451,6 +533,7 @@ button {
   border-bottom: 2px solid var(--gm-divider);
   box-shadow: 0 6px 10px -8px rgba(15, 26, 23, 0.35);
 }
+#messageHeader #expandedsubjectBox,
 #messageHeader .message-header-subject,
 #messageHeader .header-subject {
   font-size: 18px;
