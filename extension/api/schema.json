@@ -1,1 +1,0 @@
-[{"description":"GlowMail: развёртывание userChrome.css и иконок в папку chrome/ профиля.","functions":[{"async":true,"description":"Скопировать chrome/ из архива дополнения в папку chrome/ профиля, если версия дополнения новее уже развёрнутой. Возвращает развёрнутую версию.","name":"deploy","parameters":[],"type":"function"}],"namespace":"glowmail"}]

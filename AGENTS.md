@@ -22,28 +22,29 @@
 
 Если при проверке всплыл ключ — не коммитить, убрать его из файлов и истории, сообщить Марине, ключ перевыпустить. Публикация откладывается до чистой проверки.
 
-## Автообновление (с 10.11.2026)
+## Сборка .xpi (с 1.2.0)
 
-Ручное копирование `userChrome.css` в профиль — это не норма: обычный
-пользователь ждёт, что обновление темы прилетит само, как у плагинов.
-Но сам по себе `userChrome.css` обновляться не умеет — Thunderbird его
-не скачивает, это файл профиля. Поэтому GlowMail собирается как одно
-дополнение (`extension/`, `tools/pack-extension.py` → `dist/glowmail-<версия>.zip`):
-статическая тема (цвета) + Experiment API (`extension/api/api.js`), который
-при запуске разворачивает `chrome/userChrome.css` и `chrome/icons/` из
-архива дополнения в папку `chrome/` профиля. Паттерн — thunderbird-fluent
-(Thunderbird 153 ESR). После публикации на addons.thunderbird.net обновления
-прилетают сами; пользователю остаётся только перезапуск Thunderbird.
+GlowMail — **чистая статическая тема** (`theme/`): ключ `theme` (цвета) +
+`theme_experiment.stylesheet` → `chrome/userChrome.css` внутри самого .xpi.
+`python3 tools/pack-extension.py` → `dist/glowmail-<версия>.xpi` (один файл).
 
-Правила, которые нельзя нарушать:
-- Любое изменение под `chrome/` или `icons/` требует bump версии в
-  `extension/manifest.json` — развёртывание version-gated, без bump правка
-  не дойдёт до профиля.
-- `manifest.json` в архиве — в КОРНЕ, иначе установка скажет «corrupt».
-- `api/api.js` — DRAFT, в живом Thunderbird не проверен: перед публикацией
-  на ATN обязательна тестовая установка временного дополнения.
-- Публикация на ATN — отдельный шаг, нужен аккаунт Марины; код сам по себе
-  ничего не публикует.
+Что проверено на живом Thunderbird 128.14 (и почему именно так):
+- Попытка 1.1.x (Experiment API пишет в `<профиль>/chrome/`) не работала:
+  `PathUtils.join("jar:file:///…xpi!/", …)` бросает NS_ERROR_FILE_UNRECOGNIZED_PATH,
+  исключение терялось в `console.error` фона. Не возвращаться к этой схеме.
+- `theme_experiment.stylesheet` применяется и к about:3pane / about:message.
+- Иконки задаёт Thunderbird через `--icon-*` на `:root`. Подменяем переменные,
+  а не селекторы кнопок. Значения — **data:-URI** (`tools/build-icon-vars.py`):
+  относительный `url()` в переменной резолвится от `chrome://messenger/skin/…`.
+- Картинкам не из chrome:/resource: Gecko не отдаёт `context-fill/stroke` —
+  цвета в SVG зашиты (`*-light.svg` — для тёмной панели папок).
+
+Правила:
+- Любую правку `icons/*.svg` — через `python3 tools/build-icon-vars.py` (или pack).
+- `manifest.json` в архиве — в КОРНЕ. Не добавлять в манифест `background`,
+  `experiment_apis` — статическая тема их не допускает.
+- Подпись и ATN для установки «из файла» не нужны: в Thunderbird 128
+  `xpinstall.signatures.required=false`, `extensions.experiments.enabled=true`.
 
 ## Как устроен проект
 
